@@ -48,8 +48,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	tp, err := newProvider()
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		log.Fatalln(err)
 	}
 
 	tr := initTracer(tp)
@@ -65,7 +64,7 @@ func main() {
 
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	server := grpc.NewServer()
@@ -94,7 +93,7 @@ func main() {
 
 	log.Println("Starting server on port :8080")
 	if err := server.Serve(listener); err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 }
 
