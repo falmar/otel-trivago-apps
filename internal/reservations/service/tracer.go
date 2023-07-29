@@ -58,22 +58,3 @@ func (t *svcTracer) Create(ctx context.Context, input *CreateInput) (*CreateOutp
 
 	return out, err
 }
-
-func (t *svcTracer) ListAvailableRooms(ctx context.Context, input *ListAvailableRoomsInput) (*ListAvailableRoomsOutput, error) {
-	ctx, span := t.tracer.Start(ctx, "reservation.service.ListAvailableRooms")
-	defer span.End()
-
-	out, err := t.svc.ListAvailableRooms(ctx, input)
-
-	defer func() {
-		span.SetAttributes(
-			attribute.Int("output.count", len(out.Rooms)),
-		)
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, "failed to list available rooms")
-		}
-	}()
-
-	return out, err
-}

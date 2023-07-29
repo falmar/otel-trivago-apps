@@ -2,8 +2,8 @@ package endpoint
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservation/service"
-	"github.com/falmar/otel-trivago/internal/reservation/types"
+	"github.com/falmar/otel-trivago/internal/reservations/service"
+	"github.com/falmar/otel-trivago/internal/reservations/types"
 	kitendpoint "github.com/go-kit/kit/endpoint"
 	"time"
 )

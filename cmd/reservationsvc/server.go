@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservation/endpoint"
-	"github.com/falmar/otel-trivago/internal/reservation/reservationrepo"
-	"github.com/falmar/otel-trivago/internal/reservation/roomrepo"
-	"github.com/falmar/otel-trivago/internal/reservation/service"
-	"github.com/falmar/otel-trivago/internal/reservation/transport"
+	"github.com/falmar/otel-trivago/internal/reservations/endpoint"
+	"github.com/falmar/otel-trivago/internal/reservations/reservationrepo"
+	"github.com/falmar/otel-trivago/internal/reservations/service"
+	"github.com/falmar/otel-trivago/internal/reservations/transport"
+	"github.com/falmar/otel-trivago/internal/rooms/roomrepo"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel"

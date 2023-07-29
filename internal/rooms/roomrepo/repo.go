@@ -2,7 +2,7 @@ package roomrepo
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservation/types"
+	"github.com/falmar/otel-trivago/internal/reservations/types"
 )
 
 type Repository interface {

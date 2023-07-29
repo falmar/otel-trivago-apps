@@ -1,7 +1,7 @@
 package endpoint
 
 import (
-	"github.com/falmar/otel-trivago/internal/reservation/service"
+	"github.com/falmar/otel-trivago/internal/reservations/service"
 	kitendpoint "github.com/go-kit/kit/endpoint"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -18,12 +18,6 @@ func MakeEndpoints(tr trace.Tracer, s service.Service) *Endpoints {
 			"reservation.endpoint.List",
 			tr,
 			makeListEndpoint(s),
-		),
-
-		ListAvailableRoomsEndpoint: MakeTrackerEndpoint(
-			"reservation.endpoint.ListAvailableRooms",
-			tr,
-			makeListAvailableRoomsEndpoint(s),
 		),
 
 		CreateEndpoint: MakeTrackerEndpoint(

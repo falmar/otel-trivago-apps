@@ -2,7 +2,7 @@ package reservationrepo
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservation/types"
+	"github.com/falmar/otel-trivago/internal/reservations/types"
 	"github.com/google/uuid"
 	"time"
 )

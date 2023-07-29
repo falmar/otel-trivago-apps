@@ -3,8 +3,8 @@ package transport
 import (
 	"context"
 	"errors"
-	"github.com/falmar/otel-trivago/internal/reservation/endpoint"
-	"github.com/falmar/otel-trivago/internal/reservation/service"
+	"github.com/falmar/otel-trivago/internal/reservations/endpoint"
+	"github.com/falmar/otel-trivago/internal/reservations/service"
 	"github.com/go-kit/kit/transport/grpc"
 	otelcode "go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"

@@ -2,7 +2,7 @@ package transport
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservation/endpoint"
+	"github.com/falmar/otel-trivago/internal/reservations/endpoint"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

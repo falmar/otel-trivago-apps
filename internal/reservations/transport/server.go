@@ -2,7 +2,7 @@ package transport
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservation/endpoint"
+	"github.com/falmar/otel-trivago/internal/reservations/endpoint"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"go.opentelemetry.io/otel/trace"
@@ -11,12 +11,8 @@ import (
 var _ reservationpb.ReservationServiceServer = (*grpcTransport)(nil)
 
 type grpcTransport struct {
-	create         kitgrpc.Handler
-	get            kitgrpc.Handler
-	update         kitgrpc.Handler
-	delete         kitgrpc.Handler
-	list           kitgrpc.Handler
-	availableRooms kitgrpc.Handler
+	create kitgrpc.Handler
+	list   kitgrpc.Handler
 
 	reservationpb.UnimplementedReservationServiceServer
 }
@@ -35,13 +31,6 @@ func NewGRPCServer(tr trace.Tracer, endpoints *endpoint.Endpoints) reservationpb
 			decodeListRequest,
 			encodeListResponse,
 			kitgrpc.ServerBefore(spanBefore(tr, "reservation.grpc.List")),
-			kitgrpc.ServerAfter(spanAfter),
-		),
-		availableRooms: kitgrpc.NewServer(
-			endpoints.ListAvailableRoomsEndpoint,
-			decodeListAvailableRoomsRequest,
-			encodeListAvailableRoomsResponse,
-			kitgrpc.ServerBefore(spanBefore(tr, "reservation.grpc.ListAvailableRooms")),
 			kitgrpc.ServerAfter(spanAfter),
 		),
 	}
@@ -63,15 +52,6 @@ func (g *grpcTransport) ListReservations(ctx context.Context, request *reservati
 	}
 
 	return resp.(*reservationpb.ReservationListResponse), nil
-}
-
-func (g *grpcTransport) ListAvailableRooms(ctx context.Context, request *reservationpb.RoomAvailabilityRequest) (*reservationpb.RoomAvailabilityResponse, error) {
-	ctx, resp, err := g.availableRooms.ServeGRPC(ctx, request)
-	if err != nil {
-		return nil, encodeError(ctx, err)
-	}
-
-	return resp.(*reservationpb.RoomAvailabilityResponse), nil
 }
 
 func (g *grpcTransport) mustEmbedUnimplementedReservationServiceServer() {}

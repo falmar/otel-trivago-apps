@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservation/types"
+	"github.com/falmar/otel-trivago/internal/reservations/types"
 	"time"
 )
 
