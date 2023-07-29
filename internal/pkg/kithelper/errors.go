@@ -1,4 +1,4 @@
-package endpoint
+package kithelper
 
 type ErrInvalidArgument struct {
 	Message string

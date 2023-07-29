@@ -22,7 +22,7 @@ type svcTracer struct {
 }
 
 func (t *svcTracer) List(ctx context.Context, input *ListInput) (*ListOutput, error) {
-	ctx, span := t.tracer.Start(ctx, "reservation.service.List")
+	ctx, span := t.tracer.Start(ctx, "reservation.service.ListRooms")
 	defer span.End()
 
 	out, err := t.svc.List(ctx, input)

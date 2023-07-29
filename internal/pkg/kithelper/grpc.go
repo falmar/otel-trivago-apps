@@ -1,12 +1,11 @@
-package transport
+package kithelper
 
 import (
 	"context"
 	"errors"
-	"github.com/falmar/otel-trivago/internal/reservations/endpoint"
-	"github.com/falmar/otel-trivago/internal/reservations/service"
+	"github.com/falmar/otel-trivago/internal/reservations/types"
 	"github.com/go-kit/kit/transport/grpc"
-	otelcode "go.opentelemetry.io/otel/codes"
+	otelcodes "go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -15,7 +14,7 @@ import (
 
 var trackerSpanCtxKey = struct{}{}
 
-func encodeError(ctx context.Context, err error) error {
+func EncodeError(ctx context.Context, err error) error {
 	if err == nil {
 		return nil
 	}
@@ -23,12 +22,12 @@ func encodeError(ctx context.Context, err error) error {
 	code := codes.Internal
 	msg := err.Error()
 
-	var eInvalidArgument *endpoint.ErrInvalidArgument
+	var eInvalidArgument *ErrInvalidArgument
 	if errors.As(err, &eInvalidArgument) {
 		code = codes.InvalidArgument
 		msg = eInvalidArgument.Error()
 	}
-	var eReserved *service.ErrRoomReserved
+	var eReserved *types.ErrReservedRoom
 	if errors.As(err, &eReserved) {
 		code = codes.AlreadyExists
 		msg = eReserved.Error()
@@ -36,22 +35,22 @@ func encodeError(ctx context.Context, err error) error {
 
 	span := ctx.Value(trackerSpanCtxKey).(trace.Span)
 	span.RecordError(err)
-	span.SetStatus(otelcode.Error, "transport error")
+	span.SetStatus(otelcodes.Error, "transport error")
 	defer span.End()
 
 	return status.Error(code, msg)
 }
 
-func spanBefore(tracer trace.Tracer, name string) grpc.ServerRequestFunc {
+func SpanBefore(tracer trace.Tracer, name string) grpc.ServerRequestFunc {
 	return func(ctx context.Context, _ metadata.MD) context.Context {
 		ctx, span := tracer.Start(ctx, name)
 		return context.WithValue(ctx, trackerSpanCtxKey, span)
 	}
 }
 
-func spanAfter(ctx context.Context, _ *metadata.MD, _ *metadata.MD) context.Context {
+func SpanAfter(ctx context.Context, _ *metadata.MD, _ *metadata.MD) context.Context {
 	span := ctx.Value(trackerSpanCtxKey).(trace.Span)
-	span.SetStatus(otelcode.Ok, "")
+	span.SetStatus(otelcodes.Ok, "")
 	span.End()
 
 	return ctx

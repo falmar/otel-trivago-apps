@@ -2,7 +2,7 @@ package roomrepo
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservations/types"
+	"github.com/falmar/otel-trivago/internal/rooms/types"
 	"github.com/google/uuid"
 	"sync"
 )

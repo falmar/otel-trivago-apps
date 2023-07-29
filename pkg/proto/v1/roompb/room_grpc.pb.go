@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RoomService_ListAvailableRooms_FullMethodName = "/roompb.RoomService/ListAvailableRooms"
+	RoomService_ListRooms_FullMethodName = "/roompb.RoomService/ListRooms"
 )
 
 // RoomServiceClient is the client API for RoomService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RoomServiceClient interface {
-	ListAvailableRooms(ctx context.Context, in *RoomAvailabilityRequest, opts ...grpc.CallOption) (*RoomAvailabilityResponse, error)
+	ListRooms(ctx context.Context, in *ListRoomsRequest, opts ...grpc.CallOption) (*ListRoomsResponse, error)
 }
 
 type roomServiceClient struct {
@@ -37,9 +37,9 @@ func NewRoomServiceClient(cc grpc.ClientConnInterface) RoomServiceClient {
 	return &roomServiceClient{cc}
 }
 
-func (c *roomServiceClient) ListAvailableRooms(ctx context.Context, in *RoomAvailabilityRequest, opts ...grpc.CallOption) (*RoomAvailabilityResponse, error) {
-	out := new(RoomAvailabilityResponse)
-	err := c.cc.Invoke(ctx, RoomService_ListAvailableRooms_FullMethodName, in, out, opts...)
+func (c *roomServiceClient) ListRooms(ctx context.Context, in *ListRoomsRequest, opts ...grpc.CallOption) (*ListRoomsResponse, error) {
+	out := new(ListRoomsResponse)
+	err := c.cc.Invoke(ctx, RoomService_ListRooms_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *roomServiceClient) ListAvailableRooms(ctx context.Context, in *RoomAvai
 // All implementations must embed UnimplementedRoomServiceServer
 // for forward compatibility
 type RoomServiceServer interface {
-	ListAvailableRooms(context.Context, *RoomAvailabilityRequest) (*RoomAvailabilityResponse, error)
+	ListRooms(context.Context, *ListRoomsRequest) (*ListRoomsResponse, error)
 	mustEmbedUnimplementedRoomServiceServer()
 }
 
@@ -58,8 +58,8 @@ type RoomServiceServer interface {
 type UnimplementedRoomServiceServer struct {
 }
 
-func (UnimplementedRoomServiceServer) ListAvailableRooms(context.Context, *RoomAvailabilityRequest) (*RoomAvailabilityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListAvailableRooms not implemented")
+func (UnimplementedRoomServiceServer) ListRooms(context.Context, *ListRoomsRequest) (*ListRoomsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListRooms not implemented")
 }
 func (UnimplementedRoomServiceServer) mustEmbedUnimplementedRoomServiceServer() {}
 
@@ -74,20 +74,20 @@ func RegisterRoomServiceServer(s grpc.ServiceRegistrar, srv RoomServiceServer) {
 	s.RegisterService(&RoomService_ServiceDesc, srv)
 }
 
-func _RoomService_ListAvailableRooms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RoomAvailabilityRequest)
+func _RoomService_ListRooms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRoomsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoomServiceServer).ListAvailableRooms(ctx, in)
+		return srv.(RoomServiceServer).ListRooms(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RoomService_ListAvailableRooms_FullMethodName,
+		FullMethod: RoomService_ListRooms_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoomServiceServer).ListAvailableRooms(ctx, req.(*RoomAvailabilityRequest))
+		return srv.(RoomServiceServer).ListRooms(ctx, req.(*ListRoomsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -100,8 +100,8 @@ var RoomService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*RoomServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListAvailableRooms",
-			Handler:    _RoomService_ListAvailableRooms_Handler,
+			MethodName: "ListRooms",
+			Handler:    _RoomService_ListRooms_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

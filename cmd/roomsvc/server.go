@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservations/endpoint"
-	"github.com/falmar/otel-trivago/internal/reservations/reservationrepo"
-	"github.com/falmar/otel-trivago/internal/reservations/service"
-	"github.com/falmar/otel-trivago/internal/reservations/transport"
+	"github.com/falmar/otel-trivago/internal/rooms/endpoint"
+	"github.com/falmar/otel-trivago/internal/rooms/roomrepo"
+	"github.com/falmar/otel-trivago/internal/rooms/service"
+	"github.com/falmar/otel-trivago/internal/rooms/transport"
 	"github.com/falmar/otel-trivago/internal/tracer"
-	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
+	"github.com/falmar/otel-trivago/pkg/proto/v1/roompb"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"log"
 	"os"
@@ -19,8 +19,8 @@ import (
 	"net"
 )
 
-const svcName = "reservation-svc"
-const tracerName = "reservation-svc"
+const svcName = "room-svc"
+const tracerName = "room-svc"
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -28,7 +28,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8081"
 	}
 
 	// tracer setup
@@ -40,13 +40,13 @@ func main() {
 	// --
 
 	// service setup
-	svc := service.NewService(&service.Config{
-		ResvRepo: reservationrepo.NewMem(),
+	svc := service.New(&service.Config{
+		RoomRepo: roomrepo.NewMem(),
 	})
-	svc = service.NewTracer(tr, svc)
+	//svc = service.NewTracer(tr, svc)
 
 	endpoints := endpoint.New(tr, svc)
-	grpcServer := transport.NewGRPCServer(tr, endpoints)
+	grpcServer := transport.NewGRPCServer(endpoints, tr)
 
 	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
@@ -56,7 +56,7 @@ func main() {
 		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
 	)
 
-	reservationpb.RegisterReservationServiceServer(server, grpcServer)
+	roompb.RegisterRoomServiceServer(server, grpcServer)
 	// --
 
 	defer func() {

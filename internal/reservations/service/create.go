@@ -27,11 +27,11 @@ func (s *service) Create(ctx context.Context, input *CreateInput) (*CreateOutput
 	// if overlap, return error
 	for _, resv := range current {
 		if input.Start.After(resv.Start) && input.Start.Before(resv.End) {
-			return nil, &ErrRoomReserved{RoomID: resv.RoomID.String()}
+			return nil, &types.ErrReservedRoom{RoomID: resv.RoomID.String()}
 		} else if input.End.After(resv.Start) && input.End.Before(resv.End) {
-			return nil, &ErrRoomReserved{RoomID: resv.RoomID.String()}
+			return nil, &types.ErrReservedRoom{RoomID: resv.RoomID.String()}
 		} else if input.Start.Equal(resv.Start) || input.End.Equal(resv.End) {
-			return nil, &ErrRoomReserved{RoomID: resv.RoomID.String()}
+			return nil, &types.ErrReservedRoom{RoomID: resv.RoomID.String()}
 		}
 	}
 
