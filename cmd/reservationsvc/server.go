@@ -46,6 +46,14 @@ func initTracer(tp trace.TracerProvider) trace.Tracer {
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	// tracer setup
 	tp, err := newProvider()
 	if err != nil {
 		log.Fatalln(err)
@@ -58,21 +66,23 @@ func main() {
 		RoomRepo: roomrepo.NewMem(),
 	})
 	svc = service.NewTracer(tr, svc)
+	// --
 
+	// service setup
 	endpoints := endpoint.MakeEndpoints(tr, svc)
 	grpcServer := transport.NewGRPCServer(tr, endpoints)
 
-	listener, err := net.Listen("tcp", ":8080")
+	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	server := grpc.NewServer()
 
 	reservationpb.RegisterReservationServiceServer(server, grpcServer)
+	// --
 
 	defer func() {
-		ctx, cancel = context.WithTimeout(ctx, time.Second*5)
+		ctx, cancel = context.WithTimeout(context.Background(), time.Second*5)
 		defer cancel()
 
 		if err := tp.Shutdown(ctx); err != nil {
@@ -91,7 +101,7 @@ func main() {
 		server.GracefulStop()
 	}()
 
-	log.Println("Starting server on port :8080")
+	log.Println("Starting server on port :" + port)
 	if err := server.Serve(listener); err != nil {
 		log.Fatalln(err)
 	}
