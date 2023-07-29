@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/falmar/otel-trivago/internal/reservation/types"
 	"github.com/google/uuid"
 	"time"
@@ -35,8 +34,6 @@ func (s *service) Create(ctx context.Context, input *CreateInput) (*CreateOutput
 			return nil, &ErrRoomReserved{RoomID: resv.RoomID.String()}
 		}
 	}
-
-	fmt.Println(current)
 
 	resv := &types.Reservation{
 		RoomID: input.RoomID,
