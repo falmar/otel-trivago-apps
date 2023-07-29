@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/falmar/otel-trivago/internal/reservation/endpoint"
+	"github.com/falmar/otel-trivago/internal/reservation/reservationrepo"
+	"github.com/falmar/otel-trivago/internal/reservation/roomrepo"
 	"github.com/falmar/otel-trivago/internal/reservation/service"
 	"github.com/falmar/otel-trivago/internal/reservation/transport"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
@@ -12,7 +14,10 @@ import (
 )
 
 func main() {
-	svc := service.NewService()
+	svc := service.NewService(&service.Config{
+		ResvRepo: reservationrepo.NewMem(),
+		RoomRepo: roomrepo.NewMem(),
+	})
 	endpoints := endpoint.MakeEndpoints(svc)
 	grpcServer := transport.NewGRPCServer(endpoints)
 

@@ -13,9 +13,9 @@ type Endpoints struct {
 
 func MakeEndpoints(s service.Service) *Endpoints {
 	return &Endpoints{
-		ListEndpoint: makeListEndpoint(s),
-
-		CreateEndpoint:             makeCreateEndpoint(s),
+		ListEndpoint:               makeListEndpoint(s),
 		ListAvailableRoomsEndpoint: makeListAvailableRoomsEndpoint(s),
+
+		CreateEndpoint: makeCreateEndpoint(s),
 	}
 }

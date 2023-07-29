@@ -23,4 +23,5 @@ type Reservation struct {
 	End   time.Time
 
 	CreatedAt time.Time
+	UpdateAt  time.Time
 }

@@ -4,19 +4,23 @@ import (
 	"context"
 	"github.com/falmar/otel-trivago/internal/reservation/endpoint"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
-	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"time"
 )
 
 func decodeCreateRequest(_ context.Context, request interface{}) (interface{}, error) {
-	req := request.(*reservationpb.Reservation)
+	pbreq := request.(*reservationpb.Reservation)
+	req := &endpoint.CreateRequest{
+		RoomID: pbreq.RoomId,
+	}
 
-	return endpoint.CreateRequest{
-		RoomID: uuid.MustParse(req.RoomId),
-		Start:  time.Unix(req.StartDate.Seconds, 0),
-		End:    time.Unix(req.EndDate.Seconds, 0),
-	}, nil
+	if pbreq.StartDate != nil {
+		req.Start = pbreq.StartDate.AsTime().UTC()
+	}
+	if pbreq.EndDate != nil {
+		req.End = pbreq.EndDate.AsTime().UTC()
+	}
+
+	return req, nil
 }
 
 func encodeCreateResponse(_ context.Context, response interface{}) (interface{}, error) {

@@ -8,12 +8,18 @@ import (
 )
 
 func decodeListRequest(_ context.Context, request interface{}) (interface{}, error) {
-	req := request.(*reservationpb.ReservationListRequest)
+	pbreq := request.(*reservationpb.ReservationListRequest)
 
-	return endpoint.ListRequest{
-		Offset: req.Offset,
-		Limit:  req.Limit,
-	}, nil
+	req := &endpoint.ListRequest{}
+
+	if pbreq.StartDate != nil {
+		req.Start = pbreq.StartDate.AsTime().UTC()
+	}
+	if pbreq.EndDate != nil {
+		req.End = pbreq.EndDate.AsTime().UTC()
+	}
+
+	return req, nil
 }
 
 func encodeListResponse(_ context.Context, response interface{}) (interface{}, error) {

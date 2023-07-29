@@ -11,19 +11,23 @@ import (
 type ListAvailableRoomsRequest struct {
 	Start time.Time
 	End   time.Time
+
+	Capacity int64
 }
 
 type ListAvailableRoomsResponse struct {
 	Rooms []*types.Room
+	Total int64
 }
 
 func makeListAvailableRoomsEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(ListAvailableRoomsRequest)
+		req := request.(*ListAvailableRoomsRequest)
 
 		out, err := svc.ListAvailableRooms(ctx, &service.ListAvailableRoomsInput{
-			Start: req.Start,
-			End:   req.End,
+			Start:    req.Start,
+			End:      req.End,
+			Capacity: req.Capacity,
 		})
 		if err != nil {
 			return nil, err
@@ -31,6 +35,7 @@ func makeListAvailableRoomsEndpoint(svc service.Service) kitendpoint.Endpoint {
 
 		return &ListAvailableRoomsResponse{
 			Rooms: out.Rooms,
+			Total: out.Total,
 		}, nil
 	}
 }

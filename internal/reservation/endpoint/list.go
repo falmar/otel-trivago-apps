@@ -23,7 +23,7 @@ type ListResponse struct {
 
 func makeListEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(ListRequest)
+		req := request.(*ListRequest)
 
 		out, err := svc.List(ctx, &service.ListInput{
 			Start: req.Start,

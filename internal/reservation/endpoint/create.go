@@ -10,7 +10,7 @@ import (
 )
 
 type CreateRequest struct {
-	RoomID uuid.UUID
+	RoomID string
 
 	Start time.Time
 	End   time.Time
@@ -22,10 +22,21 @@ type CreateResponse struct {
 
 func makeCreateEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(CreateRequest)
+		req := request.(*CreateRequest)
+
+		id, err := uuid.Parse(req.RoomID)
+		if err != nil {
+			return "", &ErrInvalidArgument{Message: "room id must be a valid uuid"}
+		}
+		if req.Start.IsZero() {
+			return "", &ErrInvalidArgument{Message: "start date must be a valid date"}
+		}
+		if req.End.IsZero() {
+			return "", &ErrInvalidArgument{Message: "end date must be a valid date"}
+		}
 
 		out, err := svc.Create(ctx, &service.CreateInput{
-			RoomID: req.RoomID,
+			RoomID: id,
 
 			Start: req.Start,
 			End:   req.End,

@@ -2,9 +2,8 @@ package service
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservation/types"
-	"github.com/google/uuid"
-	"time"
+	"github.com/falmar/otel-trivago/internal/reservation/reservationrepo"
+	"github.com/falmar/otel-trivago/internal/reservation/roomrepo"
 )
 
 var _ Service = (*service)(nil)
@@ -16,53 +15,18 @@ type Service interface {
 }
 
 type service struct {
+	resvRepo reservationrepo.Repository
+	roomRepo roomrepo.Repository
 }
 
-func NewService() Service {
-	return &service{}
+type Config struct {
+	ResvRepo reservationrepo.Repository
+	RoomRepo roomrepo.Repository
 }
 
-type ListInput struct {
-	Start time.Time
-	End   time.Time
-
-	Limit  int64
-	Offset int64
-}
-
-type ListOutput struct {
-	Reservations []*types.Reservation
-	Total        int64
-}
-
-func (s *service) List(ctx context.Context, input *ListInput) (*ListOutput, error) {
-	return &ListOutput{}, nil
-}
-
-type CreateInput struct {
-	RoomID uuid.UUID
-
-	Start time.Time
-	End   time.Time
-}
-
-type CreateOutput struct {
-	Reservation *types.Reservation
-}
-
-func (s *service) Create(ctx context.Context, input *CreateInput) (*CreateOutput, error) {
-	return &CreateOutput{}, nil
-}
-
-type ListAvailableRoomsInput struct {
-	Start time.Time
-	End   time.Time
-}
-
-type ListAvailableRoomsOutput struct {
-	Rooms []*types.Room
-}
-
-func (s *service) ListAvailableRooms(ctx context.Context, input *ListAvailableRoomsInput) (*ListAvailableRoomsOutput, error) {
-	return &ListAvailableRoomsOutput{}, nil
+func NewService(cfg *Config) Service {
+	return &service{
+		resvRepo: cfg.ResvRepo,
+		roomRepo: cfg.RoomRepo,
+	}
 }

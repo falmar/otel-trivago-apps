@@ -4,18 +4,18 @@ import (
 	"context"
 	"github.com/falmar/otel-trivago/internal/reservation/endpoint"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
-	"time"
 )
 
 func decodeListAvailableRoomsRequest(_ context.Context, request interface{}) (interface{}, error) {
 	pbreq := request.(*reservationpb.RoomAvailabilityRequest)
-	req := endpoint.ListAvailableRoomsRequest{}
+	req := &endpoint.ListAvailableRoomsRequest{}
 
+	req.Capacity = pbreq.Capacity
 	if pbreq.StartDate != nil {
-		req.Start = time.Unix(pbreq.StartDate.Seconds, 0)
+		req.Start = pbreq.StartDate.AsTime().UTC()
 	}
 	if pbreq.EndDate != nil {
-		req.End = time.Unix(pbreq.EndDate.Seconds, 0)
+		req.End = pbreq.EndDate.AsTime().UTC()
 	}
 
 	return req, nil
@@ -34,5 +34,6 @@ func encodeListAvailableRoomsResponse(_ context.Context, response interface{}) (
 
 	return &reservationpb.RoomAvailabilityResponse{
 		Rooms: rooms,
+		Total: resp.Total,
 	}, nil
 }
