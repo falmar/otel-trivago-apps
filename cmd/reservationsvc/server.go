@@ -8,8 +8,12 @@ import (
 	"github.com/falmar/otel-trivago/internal/reservation/service"
 	"github.com/falmar/otel-trivago/internal/reservation/transport"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
@@ -41,6 +45,9 @@ func newProvider() (*sdktrace.TracerProvider, error) {
 }
 
 func initTracer(tp trace.TracerProvider) trace.Tracer {
+	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+
 	return tp.Tracer(tracerName)
 }
 
@@ -58,7 +65,6 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	tr := initTracer(tp)
 
 	svc := service.NewService(&service.Config{
@@ -76,7 +82,9 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	server := grpc.NewServer()
+	server := grpc.NewServer(
+		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+	)
 
 	reservationpb.RegisterReservationServiceServer(server, grpcServer)
 	// --
@@ -109,10 +117,16 @@ func main() {
 
 // newExporter returns a console exporter.
 func newExporter(w io.Writer) (sdktrace.SpanExporter, error) {
-	return stdouttrace.New(
-		stdouttrace.WithWriter(w),
-		// Use human-readable output.
-		stdouttrace.WithPrettyPrint(),
+	if os.Getenv("JAEGER") == "" {
+		return stdouttrace.New(
+			stdouttrace.WithWriter(w),
+			// Use human-readable output.
+			stdouttrace.WithPrettyPrint(),
+		)
+	}
+
+	return jaeger.New(
+		jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(os.Getenv("JAEGER_ENDPOINT"))),
 	)
 }
 
