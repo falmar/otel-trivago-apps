@@ -36,7 +36,7 @@ func encodeError(ctx context.Context, err error) error {
 
 	span := ctx.Value(trackerSpanCtxKey).(trace.Span)
 	span.RecordError(err)
-	span.SetStatus(otelcode.Error, msg)
+	span.SetStatus(otelcode.Error, "transport error")
 	defer span.End()
 
 	return status.Error(code, msg)

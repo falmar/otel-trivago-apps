@@ -3,6 +3,7 @@ package endpoint
 import (
 	"context"
 	kitendpoint "github.com/go-kit/kit/endpoint"
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -11,6 +12,15 @@ func MakeTrackerEndpoint(name string, tracer trace.Tracer, next kitendpoint.Endp
 		ctx, span := tracer.Start(ctx, name)
 		defer span.End()
 
-		return next(ctx, request)
+		resp, err := next(ctx, request)
+
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, "endpoint received error")
+			}
+		}()
+
+		return resp, err
 	}
 }

@@ -117,7 +117,7 @@ func main() {
 
 // newExporter returns a console exporter.
 func newExporter(w io.Writer) (sdktrace.SpanExporter, error) {
-	if os.Getenv("JAEGER") == "" {
+	if os.Getenv("JAEGER_ENDPOINT") == "" {
 		return stdouttrace.New(
 			stdouttrace.WithWriter(w),
 			// Use human-readable output.
