@@ -8,6 +8,9 @@ import (
 	"github.com/falmar/otel-trivago/internal/reservation/transport"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"google.golang.org/grpc"
 	"net"
@@ -29,6 +32,17 @@ func main() {
 	server := grpc.NewServer()
 
 	reservationpb.RegisterReservationServiceServer(server, grpcServer)
+
+	go func() {
+		sigChan := make(chan os.Signal)
+
+		signal.Notify(sigChan, syscall.SIGINT)
+		signal.Notify(sigChan, syscall.SIGTERM)
+
+		<-sigChan
+		log.Println("stop signal received")
+		server.GracefulStop()
+	}()
 
 	log.Println("Starting server on port :8080")
 	if err := server.Serve(listener); err != nil {
