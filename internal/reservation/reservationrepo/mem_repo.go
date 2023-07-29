@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/falmar/otel-trivago/internal/reservation/types"
 	"github.com/google/uuid"
+	"sync"
 	"time"
 )
 
@@ -11,6 +12,7 @@ var _ Repository = (*memRepository)(nil)
 
 type memRepository struct {
 	data map[uuid.UUID]*types.Reservation
+	mu   sync.RWMutex
 }
 
 func NewMem() Repository {
@@ -20,6 +22,8 @@ func NewMem() Repository {
 }
 
 func (r *memRepository) List(_ context.Context, start time.Time, end time.Time) ([]*types.Reservation, error) {
+	r.mu.RLock()
+
 	var reservations []*types.Reservation
 
 	if !start.IsZero() && !end.IsZero() {
@@ -30,6 +34,8 @@ func (r *memRepository) List(_ context.Context, start time.Time, end time.Time) 
 			}
 		}
 
+		r.mu.RUnlock()
+
 		return reservations, nil
 	}
 
@@ -37,10 +43,13 @@ func (r *memRepository) List(_ context.Context, start time.Time, end time.Time) 
 		reservations = append(reservations, reservation)
 	}
 
+	r.mu.RUnlock()
+
 	return reservations, nil
 }
 
 func (r *memRepository) ByRoomID(_ context.Context, roomID uuid.UUID) ([]*types.Reservation, error) {
+	r.mu.RLock()
 	var reservations []*types.Reservation
 
 	for _, reservation := range r.data {
@@ -48,6 +57,8 @@ func (r *memRepository) ByRoomID(_ context.Context, roomID uuid.UUID) ([]*types.
 			reservations = append(reservations, reservation)
 		}
 	}
+
+	r.mu.RUnlock()
 
 	return reservations, nil
 }
@@ -57,7 +68,9 @@ func (r *memRepository) Create(_ context.Context, res *types.Reservation) error 
 	res.Status = types.ReservationStatusReserved
 	res.CreatedAt = time.Now()
 
+	r.mu.Lock()
 	r.data[res.ID] = res
+	r.mu.Unlock()
 
 	return nil
 }

@@ -4,12 +4,15 @@ import (
 	"context"
 	"github.com/falmar/otel-trivago/internal/reservation/types"
 	"github.com/google/uuid"
+	"sync"
 )
 
 var _ Repository = (*memRepository)(nil)
 
 type memRepository struct {
 	rooms map[uuid.UUID]*types.Room
+
+	mu sync.RWMutex
 }
 
 func NewMem() Repository {
@@ -32,6 +35,7 @@ func NewMem() Repository {
 }
 
 func (r *memRepository) List(_ context.Context, capacity int64) ([]*types.Room, error) {
+	r.mu.RLock()
 	var rooms []*types.Room
 
 	for _, room := range r.rooms {
@@ -39,6 +43,8 @@ func (r *memRepository) List(_ context.Context, capacity int64) ([]*types.Room, 
 			rooms = append(rooms, room)
 		}
 	}
+
+	r.mu.RUnlock()
 
 	return rooms, nil
 }
