@@ -27,18 +27,17 @@ import (
 
 const tracerName = "reservation-svc"
 
-func newProvider() *sdktrace.TracerProvider {
+func newProvider() (*sdktrace.TracerProvider, error) {
 	tex, err := newExporter(os.Stdout)
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return nil, err
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithResource(newResource()),
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 		sdktrace.WithBatcher(tex))
 
-	return tp
+	return tp, nil
 }
 
 func initTracer(tp trace.TracerProvider) trace.Tracer {
@@ -47,7 +46,12 @@ func initTracer(tp trace.TracerProvider) trace.Tracer {
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
-	tp := newProvider()
+	tp, err := newProvider()
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+
 	tr := initTracer(tp)
 
 	svc := service.NewService(&service.Config{
