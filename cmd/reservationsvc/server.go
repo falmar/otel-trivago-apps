@@ -6,9 +6,11 @@ import (
 	"github.com/falmar/otel-trivago/internal/reservations/reservationrepo"
 	"github.com/falmar/otel-trivago/internal/reservations/service"
 	"github.com/falmar/otel-trivago/internal/reservations/transport"
+	roomtransport "github.com/falmar/otel-trivago/internal/rooms/transport"
 	"github.com/falmar/otel-trivago/internal/tracer"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"os"
 	"os/signal"
@@ -40,8 +42,17 @@ func main() {
 	// --
 
 	// service setup
+	roomConn, err := grpc.DialContext(ctx, "localhost:8081",
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+	)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	svc := service.NewService(&service.Config{
 		ResvRepo: reservationrepo.NewMem(),
+		RoomSvc:  roomtransport.NewGRPCClient(roomConn),
 	})
 	svc = service.NewTracer(tr, svc)
 

@@ -42,7 +42,7 @@ func (s *service) ListRooms(ctx context.Context, input *ListRoomsInput) (*ListRo
 		return nil, err
 	}
 
-	if len(rooms) > int(input.Limit) {
+	if len(rooms) > int(input.Limit) && input.Limit > 0 {
 		rooms = rooms[:input.Limit]
 	}
 
