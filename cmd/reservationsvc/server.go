@@ -11,7 +11,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.20.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 	"go.opentelemetry.io/otel/trace"
 	"io"
 	"log"
@@ -93,7 +93,7 @@ func newResource() *resource.Resource {
 		resource.NewWithAttributes(
 			semconv.SchemaURL,
 			semconv.ServiceName("reservation-svc"),
-			semconv.ServiceVersion("v0.0.0"),
+			semconv.ServiceVersion("0.0.1"),
 			attribute.String("environment", "dev"),
 		),
 	)
