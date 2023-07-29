@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/falmar/otel-trivago/internal/reservation/endpoint"
 	"github.com/falmar/otel-trivago/internal/reservation/reservationrepo"
 	"github.com/falmar/otel-trivago/internal/reservation/roomrepo"
@@ -18,6 +19,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"google.golang.org/grpc"
 	"net"
@@ -25,7 +27,7 @@ import (
 
 const tracerName = "reservation-svc"
 
-func initTracer() trace.Tracer {
+func newProvider() *sdktrace.TracerProvider {
 	tex, err := newExporter(os.Stdout)
 	if err != nil {
 		log.Println(err)
@@ -36,11 +38,17 @@ func initTracer() trace.Tracer {
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 		sdktrace.WithBatcher(tex))
 
+	return tp
+}
+
+func initTracer(tp trace.TracerProvider) trace.Tracer {
 	return tp.Tracer(tracerName)
 }
 
 func main() {
-	tr := initTracer()
+	ctx, cancel := context.WithCancel(context.Background())
+	tp := newProvider()
+	tr := initTracer(tp)
 
 	svc := service.NewService(&service.Config{
 		ResvRepo: reservationrepo.NewMem(),
@@ -59,6 +67,15 @@ func main() {
 	server := grpc.NewServer()
 
 	reservationpb.RegisterReservationServiceServer(server, grpcServer)
+
+	defer func() {
+		ctx, cancel = context.WithTimeout(ctx, time.Second*5)
+		defer cancel()
+
+		if err := tp.Shutdown(ctx); err != nil {
+			log.Println(err)
+		}
+	}()
 
 	go func() {
 		sigChan := make(chan os.Signal)
