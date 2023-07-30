@@ -2,10 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: otel-trivago
-  name: otel-trivago-http
+  name: http
   labels:
-    otel-trivago/name: otel-trivago
+    otel-trivago/env: unknown
   annotations:
     cert-manager.io/issuer: "ca-issuer"
     cert-manager.io/private-key-algorithm: "ECDSA"
@@ -38,16 +37,13 @@ spec:
     - hosts:
         - jaeger.otel-trivago.local
         - otel-trivago.local
-      secretName: otel-trivago-http
+      secretName: http-ingress-cert
 ---
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: otel-trivago
-  name: otel-trivago-grpc
-  labels:
-    otel-trivago/name: otel-trivago
+  name: grpc
   annotations:
     cert-manager.io/issuer: "ca-issuer"
     cert-manager.io/private-key-algorithm: "ECDSA"
@@ -82,5 +78,5 @@ spec:
         - grpc.otel-trivago.local
         - reservation.otel-trivago.local
         - room.otel-trivago.local
-      secretName: otel-trivago-grpc
+      secretName: grpc-ingress-cert
 ---

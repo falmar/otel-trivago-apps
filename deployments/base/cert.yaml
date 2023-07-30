@@ -1,8 +1,8 @@
+---
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: selfsigned-issuer
-  namespace: otel-trivago
 spec:
   selfSigned: { }
 ---
@@ -10,12 +10,11 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: otel-trivago-ca
-  namespace: otel-trivago
+  name: ca-certificate
 spec:
   isCA: true
   commonName: otel-trivago.local
-  secretName: otel-trivago-ca
+  secretName: ca-certificate
   privateKey:
     algorithm: ECDSA
     size: 256
@@ -29,8 +28,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: ca-issuer
-  namespace: otel-trivago
 spec:
   ca:
-    secretName: otel-trivago-ca
+    secretName: ca-certificate
 ---

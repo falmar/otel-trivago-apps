@@ -1,19 +1,17 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: otel-trivago
   name: reservation
-  labels:
-    otel-trivago/name: reservation
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      otel-trivago/name: reservation
+      otel-trivago/app: reservation
   template:
     metadata:
       labels:
-        otel-trivago/name: reservation
+        otel-trivago/app: reservation
     spec:
       containers:
         - name: hostname
@@ -34,11 +32,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: otel-trivago
   name: reservation
+  labels:
+    otel-trivago/app: reservation
 spec:
   selector:
-    otel-trivago/name: reservation
+    otel-trivago/app: reservation
   type: NodePort
   ports:
     - protocol: TCP

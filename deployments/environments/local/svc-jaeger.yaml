@@ -1,19 +1,17 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: otel-trivago
   name: jaeger
-  labels:
-    otel-trivago/name: jaeger
 spec:
   replicas: 1
   selector:
     matchLabels:
-      otel-trivago/name: jaeger
+      otel-trivago/app: jaeger
   template:
     metadata:
       labels:
-        otel-trivago/name: jaeger
+        otel-trivago/app: jaeger
     spec:
       containers:
         - name: hostname
@@ -29,11 +27,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: otel-trivago
   name: jaeger
 spec:
   selector:
-    otel-trivago/name: jaeger
+    otel-trivago/app: jaeger
   type: NodePort
   ports:
     - protocol: TCP

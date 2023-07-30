@@ -1,0 +1,14 @@
+---
+namespace: otel-trivago-local
+labels:
+  - includeTemplates: true
+    pairs:
+      otel-trivago/env: "local"
+
+resources:
+  - ../../base
+  - svc-jaeger.yaml
+
+patchesStrategicMerge:
+  - svc-reservation.yaml
+  - svc-room.yaml
