@@ -1,9 +1,10 @@
 package tracer
 
 import (
+	"context"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -14,7 +15,7 @@ import (
 	"os"
 )
 
-func NewProvider(svcName string) (*sdktrace.TracerProvider, error) {
+func NewProvider(ctx context.Context, svcName string) (*sdktrace.TracerProvider, error) {
 	r, _ := resource.Merge(
 		resource.Default(),
 		resource.NewWithAttributes(
@@ -25,7 +26,7 @@ func NewProvider(svcName string) (*sdktrace.TracerProvider, error) {
 		),
 	)
 
-	tex, err := newExporter(os.Stdout)
+	tex, err := newExporter(ctx, os.Stdout)
 	if err != nil {
 		return nil, err
 	}
@@ -45,8 +46,8 @@ func InitTracer(name string, tp trace.TracerProvider) trace.Tracer {
 }
 
 // newExporter returns a console exporter.
-func newExporter(w io.Writer) (sdktrace.SpanExporter, error) {
-	if os.Getenv("JAEGER_ENDPOINT") == "" {
+func newExporter(ctx context.Context, w io.Writer) (sdktrace.SpanExporter, error) {
+	if os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT") == "" {
 		return stdouttrace.New(
 			stdouttrace.WithWriter(w),
 			// Use human-readable output.
@@ -54,7 +55,5 @@ func newExporter(w io.Writer) (sdktrace.SpanExporter, error) {
 		)
 	}
 
-	return jaeger.New(
-		jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(os.Getenv("JAEGER_ENDPOINT"))),
-	)
+	return otlptracegrpc.New(ctx)
 }

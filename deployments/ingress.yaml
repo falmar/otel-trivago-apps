@@ -3,12 +3,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: otel-trivago
-  name: otel-trivago
+  name: otel-trivago-http
   labels:
     otel-trivago/name: otel-trivago
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/issuer: "ca-issuer"
+    cert-manager.io/private-key-algorithm: "ECDSA"
+    cert-manager.io/private-key-size: "256"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   rules:
@@ -22,10 +24,21 @@ spec:
                 name: echo
                 port:
                   name: http
+    - host: jaeger.otel-trivago.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jaeger
+                port:
+                  name: ui
   tls:
     - hosts:
+        - jaeger.otel-trivago.local
         - otel-trivago.local
-      secretName: otel-trivago-root-secret
+      secretName: otel-trivago-http
 ---
 
 apiVersion: networking.k8s.io/v1
@@ -36,6 +49,9 @@ metadata:
   labels:
     otel-trivago/name: otel-trivago
   annotations:
+    cert-manager.io/issuer: "ca-issuer"
+    cert-manager.io/private-key-algorithm: "ECDSA"
+    cert-manager.io/private-key-size: "256"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
 spec:
@@ -63,7 +79,8 @@ spec:
                   name: grpc
   tls:
     - hosts:
+        - grpc.otel-trivago.local
         - reservation.otel-trivago.local
         - room.otel-trivago.local
-      secretName: otel-trivago-grpc-secret
+      secretName: otel-trivago-grpc
 ---

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: otel-trivago
+  name: jaeger
+  labels:
+    otel-trivago/name: jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      otel-trivago/name: jaeger
+  template:
+    metadata:
+      labels:
+        otel-trivago/name: jaeger
+    spec:
+      containers:
+        - name: hostname
+          imagePullPolicy: Always
+          image: jaegertracing/all-in-one:latest
+          ports:
+            - containerPort: 16686
+              name: ui
+            - containerPort: 4317
+              name: otlp-grpc
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: otel-trivago
+  name: jaeger
+spec:
+  selector:
+    otel-trivago/name: jaeger
+  type: NodePort
+  ports:
+    - protocol: TCP
+      name: otlp-grpc
+      port: 4317
+      targetPort: otlp-grpc
+      nodePort: 30317
+    - protocol: TCP
+      name: ui
+      port: 80
+      targetPort: ui
+      nodePort: 30686
+---

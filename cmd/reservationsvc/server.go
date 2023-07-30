@@ -34,7 +34,7 @@ func main() {
 	}
 
 	// tracer setup
-	tp, err := tracer.NewProvider(svcName)
+	tp, err := tracer.NewProvider(ctx, svcName)
 	if err != nil {
 		log.Fatalln(err)
 	}
