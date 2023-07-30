@@ -21,12 +21,12 @@ type Endpoints struct {
 func New(tr trace.Tracer, svc service.Service) *Endpoints {
 	return &Endpoints{
 		ListEndpoint: MakeTracerEndpointMiddleware(
-			"reservation.endpoint.ListRooms", tr,
+			"reservations.endpoint.ListRooms", tr,
 			makeListEndpoint(svc),
 		),
 
 		CreateEndpoint: MakeTracerEndpointMiddleware(
-			"reservation.endpoint.Create", tr,
+			"reservations.endpoint.Create", tr,
 			makeCreateEndpoint(svc),
 		),
 	}

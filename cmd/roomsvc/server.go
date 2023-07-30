@@ -43,9 +43,9 @@ func main() {
 	svc := service.New(&service.Config{
 		RoomRepo: roomrepo.NewMem(),
 	})
-	//svc = service.NewTracer(tr, svc)
+	svc = service.NewTracer(svc, tr)
 
-	endpoints := endpoint.New(tr, svc)
+	endpoints := endpoint.New(svc, tr)
 	grpcServer := transport.NewGRPCServer(endpoints, tr)
 
 	listener, err := net.Listen("tcp", ":"+port)

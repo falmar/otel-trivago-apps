@@ -14,10 +14,10 @@ type Endpoints struct {
 	ListEndpoint kitendpoint.Endpoint
 }
 
-func New(tr trace.Tracer, svc service.Service) *Endpoints {
+func New(svc service.Service, tr trace.Tracer) *Endpoints {
 	return &Endpoints{
 		ListEndpoint: MakeTracerEndpointMiddleware(
-			"room.endpoint.ListRooms", tr,
+			"rooms.endpoint.ListRooms", tr,
 			MakeListEndpoint(svc),
 		),
 	}

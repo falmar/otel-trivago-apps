@@ -9,7 +9,7 @@ import (
 
 var _ Service = (*svcTracer)(nil)
 
-func NewTracer(tr trace.Tracer, svc Service) Service {
+func NewTracer(svc Service, tr trace.Tracer) Service {
 	return &svcTracer{
 		svc:    svc,
 		tracer: tr,
@@ -22,7 +22,7 @@ type svcTracer struct {
 }
 
 func (t *svcTracer) List(ctx context.Context, input *ListInput) (*ListOutput, error) {
-	ctx, span := t.tracer.Start(ctx, "reservation.service.ListRooms")
+	ctx, span := t.tracer.Start(ctx, "reservations.svc.ListRooms")
 	defer span.End()
 
 	out, err := t.svc.List(ctx, input)
@@ -41,7 +41,7 @@ func (t *svcTracer) List(ctx context.Context, input *ListInput) (*ListOutput, er
 }
 
 func (t *svcTracer) Create(ctx context.Context, input *CreateInput) (*CreateOutput, error) {
-	ctx, span := t.tracer.Start(ctx, "reservation.service.Create")
+	ctx, span := t.tracer.Start(ctx, "reservations.svc.Create")
 	defer span.End()
 
 	out, err := t.svc.Create(ctx, input)

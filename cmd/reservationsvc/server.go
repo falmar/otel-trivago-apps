@@ -59,7 +59,7 @@ func main() {
 		ResvRepo: reservationrepo.NewMem(),
 		RoomSvc:  roomtransport.NewGRPCClient(roomConn),
 	})
-	svc = service.NewTracer(tr, svc)
+	svc = service.NewTracer(svc, tr)
 
 	endpoints := endpoint.New(tr, svc)
 	grpcServer := transport.NewGRPCServer(tr, endpoints)

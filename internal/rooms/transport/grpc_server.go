@@ -23,7 +23,7 @@ func NewGRPCServer(endpoints *endpoint.Endpoints, tr trace.Tracer) roompb.RoomSe
 			endpoints.ListEndpoint,
 			decodeListRoomsRequest,
 			encodeListRoomsResponse,
-			kitgrpc.ServerBefore(kithelper.SpanBefore(tr, "reservation.grpc.Create")),
+			kitgrpc.ServerBefore(kithelper.SpanBefore(tr, "rooms.grpc.ListRooms")),
 			kitgrpc.ServerAfter(kithelper.SpanAfter),
 		),
 	}
