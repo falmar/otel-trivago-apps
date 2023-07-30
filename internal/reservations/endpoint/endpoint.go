@@ -21,18 +21,18 @@ type Endpoints struct {
 func New(tr trace.Tracer, svc service.Service) *Endpoints {
 	return &Endpoints{
 		ListEndpoint: MakeTracerEndpointMiddleware(
-			"reservations.endpoint.ListRooms", tr,
-			makeListEndpoint(svc),
+			"reservations.endpoint.ListReservations", tr,
+			makeListReservationsEndpoint(svc),
 		),
 
 		CreateEndpoint: MakeTracerEndpointMiddleware(
-			"reservations.endpoint.Create", tr,
-			makeCreateEndpoint(svc),
+			"reservations.endpoint.CreateReservation", tr,
+			makeCreateReservationEndpoint(svc),
 		),
 	}
 }
 
-func (e *Endpoints) List(ctx context.Context, input *service.ListInput) (*service.ListOutput, error) {
+func (e *Endpoints) ListReservations(ctx context.Context, input *service.ListReservationsInput) (*service.ListReservationsOutput, error) {
 	response, err := e.ListEndpoint(ctx, &ListRequest{
 		Start:  input.Start,
 		End:    input.End,
@@ -45,13 +45,13 @@ func (e *Endpoints) List(ctx context.Context, input *service.ListInput) (*servic
 
 	resp := response.(*ListResponse)
 
-	return &service.ListOutput{
+	return &service.ListReservationsOutput{
 		Reservations: resp.Reservations,
 		Total:        resp.Total,
 	}, nil
 }
 
-func (e *Endpoints) Create(ctx context.Context, input *service.CreateInput) (*service.CreateOutput, error) {
+func (e *Endpoints) CreateReservation(ctx context.Context, input *service.CreateReservationInput) (*service.CreateReservationOutput, error) {
 	response, err := e.CreateEndpoint(ctx, &CreateRequest{
 		RoomID: input.RoomID.String(),
 
@@ -64,7 +64,7 @@ func (e *Endpoints) Create(ctx context.Context, input *service.CreateInput) (*se
 
 	resp := response.(*CreateResponse)
 
-	return &service.CreateOutput{
+	return &service.CreateReservationOutput{
 		Reservation: resp.Reservation,
 	}, nil
 }
@@ -80,7 +80,7 @@ type CreateResponse struct {
 	Reservation *types.Reservation
 }
 
-func makeCreateEndpoint(svc service.Service) kitendpoint.Endpoint {
+func makeCreateReservationEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(*CreateRequest)
 
@@ -95,7 +95,7 @@ func makeCreateEndpoint(svc service.Service) kitendpoint.Endpoint {
 			return "", &kithelper.ErrInvalidArgument{Message: "end date must be a valid date"}
 		}
 
-		out, err := svc.Create(ctx, &service.CreateInput{
+		out, err := svc.CreateReservation(ctx, &service.CreateReservationInput{
 			RoomID: id,
 
 			Start: req.Start,
@@ -124,11 +124,11 @@ type ListResponse struct {
 	Total        int64
 }
 
-func makeListEndpoint(svc service.Service) kitendpoint.Endpoint {
+func makeListReservationsEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(*ListRequest)
 
-		out, err := svc.List(ctx, &service.ListInput{
+		out, err := svc.ListReservations(ctx, &service.ListReservationsInput{
 			Start: req.Start,
 			End:   req.End,
 

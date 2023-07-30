@@ -1,4 +1,4 @@
-package tracer
+package otelsvc
 
 import (
 	"context"
@@ -15,23 +15,30 @@ import (
 	"os"
 )
 
-func NewProvider(ctx context.Context, svcName string) (*sdktrace.TracerProvider, error) {
-	r, _ := resource.Merge(
+func NewResource(name string) (*resource.Resource, error) {
+	re, err := resource.Merge(
 		resource.Default(),
 		resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceName(svcName),
+			semconv.ServiceName(name),
 			semconv.ServiceVersion("0.0.1"),
 			attribute.String("environment", "dev"),
 		),
 	)
+	if err != nil {
+		return nil, err
+	}
 
+	return re, nil
+}
+
+func NewTracerProvider(ctx context.Context, re *resource.Resource) (*sdktrace.TracerProvider, error) {
 	tex, err := newExporter(ctx, os.Stdout)
 	if err != nil {
 		return nil, err
 	}
 	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithResource(r),
+		sdktrace.WithResource(re),
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 		sdktrace.WithBatcher(tex))
 

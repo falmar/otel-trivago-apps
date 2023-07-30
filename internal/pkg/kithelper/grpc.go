@@ -41,14 +41,14 @@ func EncodeError(ctx context.Context, err error) error {
 	return status.Error(code, msg)
 }
 
-func SpanBefore(tracer trace.Tracer, name string) grpc.ServerRequestFunc {
+func SpanTraceBefore(tracer trace.Tracer, name string) grpc.ServerRequestFunc {
 	return func(ctx context.Context, _ metadata.MD) context.Context {
 		ctx, span := tracer.Start(ctx, name)
 		return context.WithValue(ctx, trackerSpanCtxKey, span)
 	}
 }
 
-func SpanAfter(ctx context.Context, _ *metadata.MD, _ *metadata.MD) context.Context {
+func SpanTraceAfter(ctx context.Context, _ *metadata.MD, _ *metadata.MD) context.Context {
 	span := ctx.Value(trackerSpanCtxKey).(trace.Span)
 	span.SetStatus(otelcodes.Ok, "")
 	span.End()

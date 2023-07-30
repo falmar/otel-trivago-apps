@@ -13,8 +13,8 @@ import (
 var _ Service = (*service)(nil)
 
 type Service interface {
-	List(ctx context.Context, input *ListInput) (*ListOutput, error)
-	Create(ctx context.Context, input *CreateInput) (*CreateOutput, error)
+	ListReservations(ctx context.Context, input *ListReservationsInput) (*ListReservationsOutput, error)
+	CreateReservation(ctx context.Context, input *CreateReservationInput) (*CreateReservationOutput, error)
 }
 
 type service struct {
@@ -34,7 +34,7 @@ func NewService(cfg *Config) Service {
 	}
 }
 
-type ListInput struct {
+type ListReservationsInput struct {
 	Start time.Time
 	End   time.Time
 
@@ -42,35 +42,35 @@ type ListInput struct {
 	Offset int64
 }
 
-type ListOutput struct {
+type ListReservationsOutput struct {
 	Reservations []*types.Reservation
 	Total        int64
 }
 
-func (s *service) List(ctx context.Context, input *ListInput) (*ListOutput, error) {
+func (s *service) ListReservations(ctx context.Context, input *ListReservationsInput) (*ListReservationsOutput, error) {
 	resv, err := s.resvRepo.List(ctx, input.Start, input.End)
 	if err != nil {
 		return nil, err
 	}
 
-	return &ListOutput{
+	return &ListReservationsOutput{
 		Reservations: resv,
 		Total:        int64(len(resv)),
 	}, nil
 }
 
-type CreateInput struct {
+type CreateReservationInput struct {
 	RoomID uuid.UUID
 
 	Start time.Time
 	End   time.Time
 }
 
-type CreateOutput struct {
+type CreateReservationOutput struct {
 	Reservation *types.Reservation
 }
 
-func (s *service) Create(ctx context.Context, input *CreateInput) (*CreateOutput, error) {
+func (s *service) CreateReservation(ctx context.Context, input *CreateReservationInput) (*CreateReservationOutput, error) {
 	rooms, err := s.roomSvc.ListRooms(ctx, &roomsvc.ListRoomsInput{})
 	if err != nil {
 		return nil, err
@@ -115,7 +115,7 @@ func (s *service) Create(ctx context.Context, input *CreateInput) (*CreateOutput
 		return nil, err
 	}
 
-	return &CreateOutput{
+	return &CreateReservationOutput{
 		Reservation: resv,
 	}, nil
 }

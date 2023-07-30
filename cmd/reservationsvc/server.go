@@ -2,16 +2,18 @@ package main
 
 import (
 	"context"
+	"github.com/falmar/otel-trivago/internal/otelsvc"
 	"github.com/falmar/otel-trivago/internal/reservations/endpoint"
 	"github.com/falmar/otel-trivago/internal/reservations/reservationrepo"
 	"github.com/falmar/otel-trivago/internal/reservations/service"
 	"github.com/falmar/otel-trivago/internal/reservations/transport"
 	roomtransport "github.com/falmar/otel-trivago/internal/rooms/transport"
-	"github.com/falmar/otel-trivago/internal/tracer"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -22,7 +24,6 @@ import (
 )
 
 const svcName = "reservation-svc"
-const tracerName = "reservation-svc"
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -33,12 +34,29 @@ func main() {
 		port = "8080"
 	}
 
-	// tracer setup
-	tp, err := tracer.NewProvider(ctx, svcName)
+	// tracer/meter setup
+	re, err := otelsvc.NewResource(svcName)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	tr := tracer.InitTracer(tracerName, tp)
+
+	tp, err := otelsvc.NewTracerProvider(ctx, re)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	tr := otelsvc.InitTracer(svcName, tp)
+
+	mr, err := otelsvc.NewMeterReader()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	mp, err := otelsvc.NewMeterProvider(mr, re)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	mt := otelsvc.InitMeter(svcName, mp)
 	// --
 
 	// service setup
@@ -60,6 +78,10 @@ func main() {
 		RoomSvc:  roomtransport.NewGRPCClient(roomConn),
 	})
 	svc = service.NewTracer(svc, tr)
+	svc, err = service.NewMeter(svc, mt)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	endpoints := endpoint.New(tr, svc)
 	grpcServer := transport.NewGRPCServer(tr, endpoints)
@@ -83,6 +105,14 @@ func main() {
 			log.Println(err)
 		}
 	}()
+	defer func() {
+		ctx, cancel = context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+
+		if err := mr.Shutdown(ctx); err != nil {
+			log.Println(err)
+		}
+	}()
 
 	go func() {
 		sigChan := make(chan os.Signal)
@@ -95,7 +125,17 @@ func main() {
 		server.GracefulStop()
 	}()
 
-	log.Println("Starting server on port :" + port)
+	go func() {
+		log.Println("serving metrics at :9090/metrics")
+		http.Handle("/metrics", promhttp.Handler())
+
+		err := http.ListenAndServe(":9090", nil)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}()
+
+	log.Println("starting server on port :" + port)
 	if err := server.Serve(listener); err != nil {
 		log.Fatalln(err)
 	}

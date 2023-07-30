@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"github.com/falmar/otel-trivago/internal/otelsvc"
 	"github.com/falmar/otel-trivago/internal/rooms/endpoint"
 	"github.com/falmar/otel-trivago/internal/rooms/roomrepo"
 	"github.com/falmar/otel-trivago/internal/rooms/service"
 	"github.com/falmar/otel-trivago/internal/rooms/transport"
-	"github.com/falmar/otel-trivago/internal/tracer"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/roompb"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"log"
@@ -20,7 +20,6 @@ import (
 )
 
 const svcName = "room-svc"
-const tracerName = "room-svc"
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -32,11 +31,16 @@ func main() {
 	}
 
 	// tracer setup
-	tp, err := tracer.NewProvider(ctx, svcName)
+	re, err := otelsvc.NewResource(svcName)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	tr := tracer.InitTracer(tracerName, tp)
+
+	tp, err := otelsvc.NewTracerProvider(ctx, re)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	tr := otelsvc.InitTracer(svcName, tp)
 	// --
 
 	// service setup
@@ -79,7 +83,7 @@ func main() {
 		server.GracefulStop()
 	}()
 
-	log.Println("Starting server on port :" + port)
+	log.Println("starting server on port :" + port)
 	if err := server.Serve(listener); err != nil {
 		log.Fatalln(err)
 	}

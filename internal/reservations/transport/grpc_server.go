@@ -25,15 +25,15 @@ func NewGRPCServer(tr trace.Tracer, endpoints *endpoint.Endpoints) reservationpb
 			endpoints.CreateEndpoint,
 			decodeCreateRequest,
 			encodeCreateResponse,
-			kitgrpc.ServerBefore(kithelper.SpanBefore(tr, "reservations.grpc.Create")),
-			kitgrpc.ServerAfter(kithelper.SpanAfter),
+			kitgrpc.ServerBefore(kithelper.SpanTraceBefore(tr, "reservations.grpc.CreateReservation")),
+			kitgrpc.ServerAfter(kithelper.SpanTraceAfter),
 		),
 		list: kitgrpc.NewServer(
 			endpoints.ListEndpoint,
 			decodeListRequest,
 			encodeListResponse,
-			kitgrpc.ServerBefore(kithelper.SpanBefore(tr, "reservations.grpc.ListRooms")),
-			kitgrpc.ServerAfter(kithelper.SpanAfter),
+			kitgrpc.ServerBefore(kithelper.SpanTraceBefore(tr, "reservations.grpc.ListReservations")),
+			kitgrpc.ServerAfter(kithelper.SpanTraceAfter),
 		),
 	}
 }
