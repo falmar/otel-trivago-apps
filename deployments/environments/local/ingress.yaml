@@ -7,6 +7,8 @@ metadata:
     cert-manager.io/issuer: "ca-issuer"
     cert-manager.io/private-key-algorithm: "ECDSA"
     cert-manager.io/private-key-size: "256"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   ingressClassName: nginx
   rules:
@@ -45,7 +47,10 @@ metadata:
     cert-manager.io/issuer: "ca-issuer"
     cert-manager.io/private-key-algorithm: "ECDSA"
     cert-manager.io/private-key-size: "256"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - grpc.otel-trivago.local

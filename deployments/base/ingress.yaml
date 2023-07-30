@@ -3,21 +3,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: http
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
-  ingressClassName: nginx
+  rules: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: grpc
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
 spec:
-  ingressClassName: nginx
   rules:
     - host: reservation-hostname
       http:
