@@ -5,3 +5,10 @@ metadata:
   name: room
 spec:
   replicas: 1
+  template:
+    spec:
+      containers:
+        - name: room
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger:4317

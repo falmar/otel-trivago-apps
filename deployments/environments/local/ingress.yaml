@@ -1,0 +1,55 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: http
+  annotations:
+    cert-manager.io/issuer: "ca-issuer"
+    cert-manager.io/private-key-algorithm: "ECDSA"
+    cert-manager.io/private-key-size: "256"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: www.otel-trivago.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: echo
+                port:
+                  name: http
+    - host: jaeger.otel-trivago.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jaeger
+                port:
+                  name: ui
+  tls:
+    - hosts:
+        - jaeger.otel-trivago.local
+        - www.otel-trivago.local
+      secretName: http-ingress-cert
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grpc
+  annotations:
+    cert-manager.io/issuer: "ca-issuer"
+    cert-manager.io/private-key-algorithm: "ECDSA"
+    cert-manager.io/private-key-size: "256"
+spec:
+  tls:
+    - hosts:
+        - grpc.otel-trivago.local
+        - reservation.otel-trivago.local
+        - room.otel-trivago.local
+      secretName: grpc-ingress-cert
+---

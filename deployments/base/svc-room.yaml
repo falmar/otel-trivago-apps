@@ -14,14 +14,12 @@ spec:
         otel-trivago/app: room
     spec:
       containers:
-        - name: hostname
+        - name: room
           imagePullPolicy: Always
           image: docker.io/falmar/otel-trivago:room
           env:
             - name: PORT
               value: "80"
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://jaeger:4317
           ports:
             - containerPort: 80
               name: grpc
