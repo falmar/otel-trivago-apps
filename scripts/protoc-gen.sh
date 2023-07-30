@@ -1,3 +1,5 @@
+#!/bin/bash
+
 protoc \
   --proto_path=api/proto/v1 \
   --go_out=./pkg/proto/v1 --go_opt=paths=source_relative \

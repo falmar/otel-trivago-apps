@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: otel-trivago
+  name: echo
+  labels:
+    otel-trivago/name: echo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      otel-trivago/name: echo
+  template:
+    metadata:
+      labels:
+        otel-trivago/name: echo
+    spec:
+      containers:
+        - name: hostname
+          imagePullPolicy: Always
+          image: docker.io/falmar/hostname:latest
+          env:
+            - name: PORT
+              value: "80"
+          ports:
+            - containerPort: 80
+              name: http
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: otel-trivago
+  name: echo
+spec:
+  selector:
+    otel-trivago/name: echo
+  type: NodePort
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: http
+      nodePort: 30005
+---

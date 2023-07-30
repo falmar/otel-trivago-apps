@@ -42,7 +42,12 @@ func main() {
 	// --
 
 	// service setup
-	roomConn, err := grpc.DialContext(ctx, "localhost:8081",
+	roomHost := os.Getenv("ROOM_HOST")
+	if roomHost == "" {
+		roomHost = "localhost:8081"
+	}
+
+	roomConn, err := grpc.DialContext(ctx, roomHost,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
 	)

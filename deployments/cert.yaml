@@ -1,0 +1,65 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  namespace: otel-trivago
+spec:
+  selfSigned: { }
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: ca-issuer
+  namespace: otel-trivago
+spec:
+  ca:
+    secretName: otel-trivago-root-secret
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: grpc-ca-issuer
+  namespace: otel-trivago
+spec:
+  ca:
+    secretName: otel-trivago-grpc-secret
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: otel-trivago-grpc-ca
+  namespace: otel-trivago
+spec:
+  isCA: true
+  commonName: grpc.otel-trivago.local
+  dnsNames:
+    - reservation.otel-trivago.local
+    - room.otel-trivago.local
+  secretName: otel-trivago-grpc-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: otel-trivago-ca
+  namespace: otel-trivago
+spec:
+  isCA: true
+  commonName: otel-trivago.local
+  dnsNames:
+    - otel-trivago.local
+  secretName: otel-trivago-root-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+---

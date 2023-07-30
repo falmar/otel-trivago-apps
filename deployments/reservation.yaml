@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: otel-trivago
+  name: reservation
+  labels:
+    otel-trivago/name: reservation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      otel-trivago/name: reservation
+  template:
+    metadata:
+      labels:
+        otel-trivago/name: reservation
+    spec:
+      containers:
+        - name: hostname
+          imagePullPolicy: Always
+          image: docker.io/falmar/otel-trivago:reservation
+          env:
+            - name: PORT
+              value: "80"
+            - name: ROOM_HOST
+              value: "room:80"
+          ports:
+            - containerPort: 80
+              name: grpc
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: otel-trivago
+  name: reservation
+spec:
+  selector:
+    otel-trivago/name: reservation
+  type: NodePort
+  ports:
+    - protocol: TCP
+      name: grpc
+      port: 80
+      targetPort: grpc
+      nodePort: 30080
+---
