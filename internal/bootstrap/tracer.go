@@ -1,4 +1,4 @@
-package otelsvc
+package bootstrap
 
 import (
 	"context"

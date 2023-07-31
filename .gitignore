@@ -24,3 +24,7 @@ go.work
 
 # IDE/Editor
 .idea
+
+# configs
+/configs/*.yaml
+!/configs/example.*.yaml

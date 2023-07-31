@@ -1,4 +1,4 @@
-package otelsvc
+package bootstrap
 
 import (
 	"go.opentelemetry.io/otel/exporters/prometheus"

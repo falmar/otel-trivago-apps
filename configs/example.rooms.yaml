@@ -1,0 +1,12 @@
+service:
+  name: "rooms"
+  port: "8081"
+
+# grpc endpoint for the otpl collector
+otpl_endpoint: "http://localhost:4317"
+
+prometheus:
+  metrics:
+    enable: false
+    port: "8191"
+    path: "/metrics"
