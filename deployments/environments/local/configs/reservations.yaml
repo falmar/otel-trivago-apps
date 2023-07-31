@@ -1,0 +1,15 @@
+service:
+  name: "reservations"
+  port: "80"
+
+# grpc endpoint for the otpl collector
+otpl_endpoint: "http://jaeger:4317"
+
+prometheus:
+  metrics:
+    enable: true
+    port: "9090"
+    path: "/metrics"
+
+rooms:
+  endpoint: "room:80"

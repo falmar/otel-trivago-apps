@@ -10,5 +10,24 @@ spec:
       containers:
         - name: room
           env:
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://jaeger:4317
+            - name: CONFIG
+              value: "./configs/config.yaml"
+          volumeMounts:
+            - mountPath: /configs
+              name: config
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: svc-room
+            items:
+              - key: rooms.yaml
+                path: config.yaml
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: svc-room
+---

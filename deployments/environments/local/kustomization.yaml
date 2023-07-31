@@ -27,3 +27,11 @@ patches:
       - op: replace
         path: /spec/rules/1/host
         value: room.otel-trivago.local
+
+configMapGenerator:
+  - name: svc-reservation
+    files:
+      - configs/reservations.yaml
+  - name: svc-room
+    files:
+      - configs/rooms.yaml

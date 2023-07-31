@@ -17,12 +17,11 @@ spec:
         - name: room
           imagePullPolicy: Always
           image: docker.io/falmar/otel-trivago:room
-          env:
-            - name: PORT
-              value: "80"
           ports:
             - containerPort: 80
               name: grpc
+            - containerPort: 9090
+              name: metrics
 ---
 
 apiVersion: v1
@@ -34,11 +33,9 @@ metadata:
 spec:
   selector:
     otel-trivago/app: room
-  type: NodePort
+  type: ClusterIP
   ports:
     - protocol: TCP
       name: grpc
       port: 80
-      targetPort: grpc
-      nodePort: 30081
 ---

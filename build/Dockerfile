@@ -11,21 +11,18 @@ COPY ./internal /go-app/internal
 COPY ./pkg /go-app/pkg
 
 # build
-# TODO: move each go build to its own stage for parallelism
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
-RUN ls ./cmd && go build -ldflags="-s -w" -o ./bin/reservation ./cmd/reservationsvc \
-    && chmod +x ./bin/reservation \
-    && go build -ldflags="-s -w" -o ./bin/room ./cmd/roomsvc \
-    && chmod +x ./bin/room
+RUN ls ./cmd && go build -ldflags="-s -w" -o ./bin/main ./cmd \
+    && chmod +x ./bin/main
 # ---
 
 FROM alpine:3.18 as reservation
-COPY --from=builder /go-app/bin/reservation /main
-ENTRYPOINT ["/main"]
+COPY --from=builder /go-app/bin/main /main
+ENTRYPOINT ["/main", "reservations"]
 
 
 FROM alpine:3.18 as room
-COPY --from=builder /go-app/bin/room /main
-ENTRYPOINT ["/main"]
+COPY --from=builder /go-app/bin/main /main
+ENTRYPOINT ["/main", "rooms"]
