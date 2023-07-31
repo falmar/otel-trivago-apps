@@ -1,6 +1,6 @@
 ---
-apiVersion: apps/v1
 kind: Deployment
+apiVersion: apps/v1
 metadata:
   name: echo
 spec:
@@ -14,7 +14,7 @@ spec:
         otel-trivago/app: echo
     spec:
       containers:
-        - name: hostname
+        - name: echo
           imagePullPolicy: Always
           image: docker.io/falmar/hostname:latest
           env:

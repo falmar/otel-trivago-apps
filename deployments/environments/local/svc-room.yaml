@@ -4,8 +4,13 @@ kind: Deployment
 metadata:
   name: room
 spec:
-  replicas: 1
+  replicas: 2
   template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9090"
     spec:
       containers:
         - name: room
@@ -23,11 +28,4 @@ spec:
             items:
               - key: rooms.yaml
                 path: config.yaml
-
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: svc-room
 ---

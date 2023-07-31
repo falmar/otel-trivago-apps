@@ -14,7 +14,7 @@ spec:
         otel-trivago/app: jaeger
     spec:
       containers:
-        - name: hostname
+        - name: jaeger
           imagePullPolicy: Always
           image: jaegertracing/all-in-one:latest
           ports:

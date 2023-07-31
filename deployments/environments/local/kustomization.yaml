@@ -10,6 +10,7 @@ resources:
   - cert.yaml
   - svc-jaeger.yaml
   - svc-echo.yaml
+  - svc-prom.yaml
 
 patchesStrategicMerge:
   - ingress.yaml
