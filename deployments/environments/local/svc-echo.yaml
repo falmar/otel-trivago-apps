@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         otel-trivago/app: echo
+        otel-trivago/allow-ingress: "default"
     spec:
       containers:
         - name: echo
