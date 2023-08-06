@@ -8,29 +8,11 @@ labels:
       otel-trivago/env: "local"
 
 resources:
-  - ns.yaml
   - ../../base
-  - cert.yaml
-  - svc-jaeger.yaml
-  - svc-echo.yaml
-  - svc-prom.yaml
 
 patchesStrategicMerge:
-  - ingress.yaml
   - svc-reservation.yaml
   - svc-room.yaml
-
-patches:
-  - target:
-      kind: Ingress
-      name: grpc
-    patch: |-
-      - op: replace
-        path: /spec/rules/0/host
-        value: reservation.otel-trivago.local
-      - op: replace
-        path: /spec/rules/1/host
-        value: room.otel-trivago.local
 
 configMapGenerator:
   - name: svc-reservation

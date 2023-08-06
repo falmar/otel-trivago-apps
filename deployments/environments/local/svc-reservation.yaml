@@ -4,15 +4,11 @@ kind: Deployment
 metadata:
   name: reservation
 spec:
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
         otel-trivago/allow-ingress: "default"
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: /metrics
-        prometheus.io/port: "9090"
     spec:
       containers:
         - name: reservation
