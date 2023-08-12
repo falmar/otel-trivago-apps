@@ -9,14 +9,12 @@ import (
 	"github.com/falmar/otel-trivago/internal/reservations/reservationrepo"
 	"github.com/falmar/otel-trivago/internal/reservations/service"
 	"github.com/falmar/otel-trivago/internal/reservations/transport"
-	roomtransport "github.com/falmar/otel-trivago/internal/rooms/transport"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net"
 	"net/http"
@@ -82,21 +80,11 @@ var reservationCmd = &cobra.Command{
 		// service setup
 		var grpcService reservationpb.ReservationServiceServer
 		{
-			roomConn, err := grpc.DialContext(ctx,
-				viper.GetString("rooms.endpoint"),
-				grpc.WithTransportCredentials(insecure.NewCredentials()),
-				grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
-			)
-			if err != nil {
-				return err
-			}
-
 			svc := service.NewService(&service.Config{
 				ResvRepo: reservationrepo.NewMem(),
-				RoomSvc:  roomtransport.NewGRPCClient(roomConn),
 			})
 			svc = service.NewTracer(svc, otpl.Tracer)
-			svc, err = service.NewMeter(svc, otpl.Meter)
+			svc, err := service.NewMeter(svc, otpl.Meter)
 			if err != nil {
 				return err
 			}

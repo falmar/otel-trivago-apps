@@ -13,7 +13,7 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              otel-trivago/app: "reservation"
+              otel-trivago/app: "frontdesk"
       ports:
         - protocol: TCP
           port: 80
