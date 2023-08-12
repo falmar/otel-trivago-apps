@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"github.com/falmar/otel-trivago/internal/stay/types"
 	"github.com/google/uuid"
 	"sync"
@@ -27,10 +28,10 @@ func (m *memRepository) List(_ context.Context, options *ListOptions) ([]*types.
 	m.mu.RLock()
 
 	for _, stay := range m.data {
-		if options.RoomID != "" && stay.RoomID.String() != options.RoomID {
+		if options.RoomID != uuid.Nil && stay.RoomID != options.RoomID {
 			continue
 		}
-		if options.ReservationID != "" && stay.ReservationID.String() != options.ReservationID {
+		if options.ReservationID != uuid.Nil && stay.ReservationID != options.ReservationID {
 			continue
 		}
 
@@ -40,6 +41,19 @@ func (m *memRepository) List(_ context.Context, options *ListOptions) ([]*types.
 	m.mu.RUnlock()
 
 	return stays, nil
+}
+
+func (m *memRepository) GetById(_ context.Context, id uuid.UUID) (*types.Stay, error) {
+	m.mu.RLock()
+
+	stay, ok := m.data[id.String()]
+	if !ok {
+		return nil, &types.ErrStayNotFound{Message: fmt.Sprintf("stay [%s] not found", id.String())}
+	}
+
+	m.mu.RUnlock()
+
+	return stay, nil
 }
 
 func (m *memRepository) Create(_ context.Context, stay *types.Stay) error {
