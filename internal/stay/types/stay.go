@@ -10,8 +10,8 @@ type Stay struct {
 	RoomID        uuid.UUID
 	ReservationID uuid.UUID
 
-	CheckedInAt  time.Time
-	CheckedOutAt time.Time
+	CheckIn  time.Time
+	CheckOut time.Time
 
 	Notes string
 }

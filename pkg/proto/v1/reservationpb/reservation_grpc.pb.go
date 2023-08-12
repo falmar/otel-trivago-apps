@@ -27,8 +27,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReservationServiceClient interface {
-	ListReservations(ctx context.Context, in *ReservationListRequest, opts ...grpc.CallOption) (*ReservationListResponse, error)
-	CreateReservation(ctx context.Context, in *Reservation, opts ...grpc.CallOption) (*ReservationResponse, error)
+	ListReservations(ctx context.Context, in *ListReservationRequest, opts ...grpc.CallOption) (*ListReservationResponse, error)
+	CreateReservation(ctx context.Context, in *CreateReservationRequest, opts ...grpc.CallOption) (*CreateReservationResponse, error)
 }
 
 type reservationServiceClient struct {
@@ -39,8 +39,8 @@ func NewReservationServiceClient(cc grpc.ClientConnInterface) ReservationService
 	return &reservationServiceClient{cc}
 }
 
-func (c *reservationServiceClient) ListReservations(ctx context.Context, in *ReservationListRequest, opts ...grpc.CallOption) (*ReservationListResponse, error) {
-	out := new(ReservationListResponse)
+func (c *reservationServiceClient) ListReservations(ctx context.Context, in *ListReservationRequest, opts ...grpc.CallOption) (*ListReservationResponse, error) {
+	out := new(ListReservationResponse)
 	err := c.cc.Invoke(ctx, ReservationService_ListReservations_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -48,8 +48,8 @@ func (c *reservationServiceClient) ListReservations(ctx context.Context, in *Res
 	return out, nil
 }
 
-func (c *reservationServiceClient) CreateReservation(ctx context.Context, in *Reservation, opts ...grpc.CallOption) (*ReservationResponse, error) {
-	out := new(ReservationResponse)
+func (c *reservationServiceClient) CreateReservation(ctx context.Context, in *CreateReservationRequest, opts ...grpc.CallOption) (*CreateReservationResponse, error) {
+	out := new(CreateReservationResponse)
 	err := c.cc.Invoke(ctx, ReservationService_CreateReservation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -61,8 +61,8 @@ func (c *reservationServiceClient) CreateReservation(ctx context.Context, in *Re
 // All implementations must embed UnimplementedReservationServiceServer
 // for forward compatibility
 type ReservationServiceServer interface {
-	ListReservations(context.Context, *ReservationListRequest) (*ReservationListResponse, error)
-	CreateReservation(context.Context, *Reservation) (*ReservationResponse, error)
+	ListReservations(context.Context, *ListReservationRequest) (*ListReservationResponse, error)
+	CreateReservation(context.Context, *CreateReservationRequest) (*CreateReservationResponse, error)
 	mustEmbedUnimplementedReservationServiceServer()
 }
 
@@ -70,10 +70,10 @@ type ReservationServiceServer interface {
 type UnimplementedReservationServiceServer struct {
 }
 
-func (UnimplementedReservationServiceServer) ListReservations(context.Context, *ReservationListRequest) (*ReservationListResponse, error) {
+func (UnimplementedReservationServiceServer) ListReservations(context.Context, *ListReservationRequest) (*ListReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListReservations not implemented")
 }
-func (UnimplementedReservationServiceServer) CreateReservation(context.Context, *Reservation) (*ReservationResponse, error) {
+func (UnimplementedReservationServiceServer) CreateReservation(context.Context, *CreateReservationRequest) (*CreateReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateReservation not implemented")
 }
 func (UnimplementedReservationServiceServer) mustEmbedUnimplementedReservationServiceServer() {}
@@ -90,7 +90,7 @@ func RegisterReservationServiceServer(s grpc.ServiceRegistrar, srv ReservationSe
 }
 
 func _ReservationService_ListReservations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReservationListRequest)
+	in := new(ListReservationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -102,13 +102,13 @@ func _ReservationService_ListReservations_Handler(srv interface{}, ctx context.C
 		FullMethod: ReservationService_ListReservations_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReservationServiceServer).ListReservations(ctx, req.(*ReservationListRequest))
+		return srv.(ReservationServiceServer).ListReservations(ctx, req.(*ListReservationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ReservationService_CreateReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Reservation)
+	in := new(CreateReservationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func _ReservationService_CreateReservation_Handler(srv interface{}, ctx context.
 		FullMethod: ReservationService_CreateReservation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReservationServiceServer).CreateReservation(ctx, req.(*Reservation))
+		return srv.(ReservationServiceServer).CreateReservation(ctx, req.(*CreateReservationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

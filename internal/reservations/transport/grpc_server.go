@@ -3,6 +3,7 @@ package transport
 import (
 	"context"
 	"github.com/falmar/otel-trivago/internal/reservations/endpoint"
+	"github.com/falmar/otel-trivago/internal/reservations/types"
 	"github.com/falmar/otel-trivago/pkg/pkg/kithelper"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
@@ -33,28 +34,28 @@ func NewGRPCServer(endpoints *endpoint.Endpoints) reservationpb.ReservationServi
 	}
 }
 
-func (g *grpcTransport) CreateReservation(ctx context.Context, reservation *reservationpb.Reservation) (*reservationpb.ReservationResponse, error) {
+func (g *grpcTransport) CreateReservation(ctx context.Context, reservation *reservationpb.CreateReservationRequest) (*reservationpb.CreateReservationResponse, error) {
 	ctx, resp, err := g.create.ServeGRPC(ctx, reservation)
 	if err != nil {
 		return nil, kithelper.EncodeError(ctx, err)
 	}
 
-	return resp.(*reservationpb.ReservationResponse), nil
+	return resp.(*reservationpb.CreateReservationResponse), nil
 }
 
-func (g *grpcTransport) ListReservations(ctx context.Context, request *reservationpb.ReservationListRequest) (*reservationpb.ReservationListResponse, error) {
+func (g *grpcTransport) ListReservations(ctx context.Context, request *reservationpb.ListReservationRequest) (*reservationpb.ListReservationResponse, error) {
 	ctx, resp, err := g.list.ServeGRPC(ctx, request)
 	if err != nil {
 		return nil, kithelper.EncodeError(ctx, err)
 	}
 
-	return resp.(*reservationpb.ReservationListResponse), nil
+	return resp.(*reservationpb.ListReservationResponse), nil
 }
 
 func (g *grpcTransport) mustEmbedUnimplementedReservationServiceServer() {}
 
 func decodeListRequest(_ context.Context, request interface{}) (interface{}, error) {
-	pbreq := request.(*reservationpb.ReservationListRequest)
+	pbreq := request.(*reservationpb.ListReservationRequest)
 
 	req := &endpoint.ListRequest{}
 
@@ -73,30 +74,20 @@ func encodeListResponse(_ context.Context, response interface{}) (interface{}, e
 	var resv []*reservationpb.Reservation
 
 	for _, r := range resp.Reservations {
-		resv = append(resv, &reservationpb.Reservation{
-			Id:     r.ID.String(),
-			RoomId: r.RoomID.String(),
-			Status: reservationpb.ReservationStatus(r.Status),
-			StartDate: &timestamppb.Timestamp{
-				Seconds: r.Start.Unix(),
-			},
-			EndDate: &timestamppb.Timestamp{
-				Seconds: r.End.Unix(),
-			},
-			CreatedAt: &timestamppb.Timestamp{
-				Seconds: r.CreatedAt.Unix(),
-			},
-		})
+		rpb := &reservationpb.Reservation{}
+		mapReservation(r, rpb)
+
+		resv = append(resv, rpb)
 	}
 
-	return &reservationpb.ReservationListResponse{
+	return &reservationpb.ListReservationResponse{
 		Reservations: resv,
 		Total:        resp.Total,
 	}, nil
 }
 
 func decodeCreateRequest(_ context.Context, request interface{}) (interface{}, error) {
-	pbreq := request.(*reservationpb.Reservation)
+	pbreq := request.(*reservationpb.CreateReservationRequest)
 	req := &endpoint.CreateRequest{
 		RoomID: pbreq.RoomId,
 	}
@@ -112,22 +103,25 @@ func decodeCreateRequest(_ context.Context, request interface{}) (interface{}, e
 }
 
 func encodeCreateResponse(_ context.Context, response interface{}) (interface{}, error) {
-	resv := response.(*endpoint.CreateResponse).Reservation
+	rpb := &reservationpb.Reservation{}
+	mapReservation(response.(*endpoint.CreateResponse).Reservation, rpb)
 
-	return &reservationpb.ReservationResponse{
-		Reservation: &reservationpb.Reservation{
-			Id:     resv.ID.String(),
-			RoomId: resv.RoomID.String(),
-			Status: reservationpb.ReservationStatus(resv.Status),
-			StartDate: &timestamppb.Timestamp{
-				Seconds: resv.Start.Unix(),
-			},
-			EndDate: &timestamppb.Timestamp{
-				Seconds: resv.End.Unix(),
-			},
-			CreatedAt: &timestamppb.Timestamp{
-				Seconds: resv.CreatedAt.Unix(),
-			},
-		},
+	return &reservationpb.CreateReservationResponse{
+		Reservation: rpb,
 	}, nil
+}
+
+func mapReservation(r *types.Reservation, rpb *reservationpb.Reservation) {
+	rpb.Id = r.ID.String()
+	rpb.RoomId = r.RoomID.String()
+	rpb.Status = reservationpb.ReservationStatus(r.Status)
+	rpb.StartDate = &timestamppb.Timestamp{
+		Seconds: r.Start.Unix(),
+	}
+	rpb.EndDate = &timestamppb.Timestamp{
+		Seconds: r.End.Unix(),
+	}
+	rpb.CreatedAt = &timestamppb.Timestamp{
+		Seconds: r.CreatedAt.Unix(),
+	}
 }

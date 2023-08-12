@@ -1,13 +1,13 @@
 syntax = "proto3";
-option go_package = "github.com/falmar/otel-trivago/api/gen/reservationpb";
+option go_package = "github.com/falmar/otel-trivago/api/proto/reservationpb";
 
 import "google/protobuf/timestamp.proto";
 
 package reservationpb;
 
 service ReservationService {
-  rpc ListReservations(ReservationListRequest) returns (ReservationListResponse);
-  rpc CreateReservation(Reservation) returns (ReservationResponse);
+  rpc ListReservations(ListReservationRequest) returns (ListReservationResponse);
+  rpc CreateReservation(CreateReservationRequest) returns (CreateReservationResponse);
 }
 
 enum ReservationStatus {
@@ -20,28 +20,32 @@ enum ReservationStatus {
 message Reservation {
   string id = 1;
   string room_id = 2;
+
   ReservationStatus status = 3;
+
   google.protobuf.Timestamp start_date = 4;
   google.protobuf.Timestamp end_date = 5;
+
   google.protobuf.Timestamp created_at = 6;
 }
 
-message ReservationRequest {
-  string id = 1;
-}
-
-message ReservationResponse {
-  Reservation reservation = 1;
-}
-
-message ReservationListRequest {
+message ListReservationRequest {
   int64 offset = 1;
   int64 limit = 2;
 
   google.protobuf.Timestamp start_date = 3;
   google.protobuf.Timestamp end_date = 4;
 }
-message ReservationListResponse {
+message ListReservationResponse {
   repeated Reservation reservations = 1;
   int64 total = 2;
+}
+
+message CreateReservationRequest {
+  string room_id = 1;
+  google.protobuf.Timestamp start_date = 2;
+  google.protobuf.Timestamp end_date = 3;
+}
+message CreateReservationResponse {
+  Reservation reservation = 1;
 }

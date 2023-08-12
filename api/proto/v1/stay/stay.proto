@@ -1,0 +1,60 @@
+syntax = "proto3";
+option go_package = "github.com/falmar/otel-trivago/api/proto/staypb";
+
+import "google/protobuf/timestamp.proto";
+
+package stay;
+
+
+message Stay {
+  string id = 1;
+  string roomId = 2;
+  string reservationId = 3;
+
+  google.protobuf.Timestamp check_in = 4;
+  google.protobuf.Timestamp check_out = 5;
+
+  string note = 6;
+}
+
+service StayService {
+  rpc ListStays(ListStaysRequest) returns (ListStaysResponse) {}
+  rpc CreateStay(CreateStayRequest) returns (CreateStayResponse) {}
+  rpc UpdateStay(UpdateStayRequest) returns (UpdateStayResponse) {}
+}
+
+message ListStaysRequest {
+  string roomId = 1;
+  string reservationId = 2;
+  int64 limit = 3;
+  int64 offset = 4;
+}
+message ListStaysResponse {
+  repeated Stay stays = 1;
+  int64 total = 2;
+}
+
+message CreateStayRequest {
+  string roomId = 1;
+  string reservationId = 2;
+
+  google.protobuf.Timestamp check_in = 3;
+
+  string note = 4;
+}
+message CreateStayResponse {
+  Stay stay = 1;
+}
+
+message UpdateStayRequest {
+  string id = 1;
+  string roomId = 2;
+
+  google.protobuf.Timestamp check_in = 3;
+  google.protobuf.Timestamp check_out = 4;
+
+  string note = 5;
+}
+message UpdateStayResponse {
+  Stay stay = 1;
+}

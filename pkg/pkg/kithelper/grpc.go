@@ -14,7 +14,7 @@ import (
 
 var trackerSpanCtxKey = struct{}{}
 
-func EncodeError(ctx context.Context, err error) error {
+func EncodeError(_ context.Context, err error) error {
 	if err == nil {
 		return nil
 	}
@@ -33,10 +33,10 @@ func EncodeError(ctx context.Context, err error) error {
 		msg = eReserved.Error()
 	}
 
-	span := ctx.Value(trackerSpanCtxKey).(trace.Span)
-	span.RecordError(err)
-	span.SetStatus(otelcodes.Error, "transport error")
-	defer span.End()
+	//span := ctx.Value(trackerSpanCtxKey).(trace.Span)
+	//span.RecordError(err)
+	//span.SetStatus(otelcodes.Error, "transport error")
+	//defer span.End()
 
 	return status.Error(code, msg)
 }
