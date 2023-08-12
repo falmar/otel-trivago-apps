@@ -48,7 +48,7 @@ func (r *memRepository) List(_ context.Context, start time.Time, end time.Time) 
 	return reservations, nil
 }
 
-func (r *memRepository) ByRoomID(_ context.Context, roomID uuid.UUID) ([]*types.Reservation, error) {
+func (r *memRepository) ListByRoomID(_ context.Context, roomID uuid.UUID) ([]*types.Reservation, error) {
 	r.mu.RLock()
 	var reservations []*types.Reservation
 

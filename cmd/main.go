@@ -45,7 +45,7 @@ func init() {
 	rootCmd.PersistentFlags().StringP("config", "c", "./config.yaml", "config file path")
 	_ = viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
 
-	rootCmd.PersistentFlags().String("prometheus-port", "8190", "port to serve prometheus metrics")
+	rootCmd.PersistentFlags().String("prometheus-port", "9090", "port to serve prometheus metrics")
 	rootCmd.PersistentFlags().String("prometheus-path", "/metrics", "path to serve prometheus metrics")
 	_ = viper.BindPFlag("prometheus.metrics.port", rootCmd.PersistentFlags().Lookup("prometheus-port"))
 	_ = viper.BindPFlag("prometheus.metrics.path", rootCmd.PersistentFlags().Lookup("prometheus-path"))

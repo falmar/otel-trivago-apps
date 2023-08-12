@@ -63,7 +63,7 @@ type CreateReservationOutput struct {
 }
 
 func (s *service) CreateReservation(ctx context.Context, input *CreateReservationInput) (*CreateReservationOutput, error) {
-	current, err := s.resvRepo.ByRoomID(ctx, input.RoomID)
+	current, err := s.resvRepo.ListByRoomID(ctx, input.RoomID)
 	if err != nil {
 		return nil, err
 	}
