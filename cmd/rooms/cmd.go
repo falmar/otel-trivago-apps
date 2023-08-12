@@ -85,8 +85,8 @@ var roomsCmd = &cobra.Command{
 			})
 			svc = service.NewTracer(svc, otpl.Tracer)
 
-			endpoints := endpoint.New(svc, otpl.Tracer)
-			grpcService = transport.NewGRPCServer(endpoints, otpl.Tracer)
+			endpoints := endpoint.New(svc)
+			grpcService = transport.NewGRPCServer(endpoints)
 		}
 		// --
 

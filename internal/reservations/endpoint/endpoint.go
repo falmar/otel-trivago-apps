@@ -2,12 +2,11 @@ package endpoint
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/pkg/kithelper"
 	"github.com/falmar/otel-trivago/internal/reservations/service"
 	"github.com/falmar/otel-trivago/internal/reservations/types"
+	"github.com/falmar/otel-trivago/pkg/pkg/kithelper"
 	kitendpoint "github.com/go-kit/kit/endpoint"
 	"github.com/google/uuid"
-	"go.opentelemetry.io/otel/trace"
 	"time"
 )
 
@@ -18,17 +17,10 @@ type Endpoints struct {
 	CreateEndpoint kitendpoint.Endpoint
 }
 
-func New(tr trace.Tracer, svc service.Service) *Endpoints {
+func New(svc service.Service) *Endpoints {
 	return &Endpoints{
-		ListEndpoint: MakeTracerEndpointMiddleware(
-			"reservations.endpoint.ListReservations", tr,
-			makeListReservationsEndpoint(svc),
-		),
-
-		CreateEndpoint: MakeTracerEndpointMiddleware(
-			"reservations.endpoint.CreateReservation", tr,
-			makeCreateReservationEndpoint(svc),
-		),
+		ListEndpoint:   makeListReservationsEndpoint(svc),
+		CreateEndpoint: makeCreateReservationEndpoint(svc),
 	}
 }
 

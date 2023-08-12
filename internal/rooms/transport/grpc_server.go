@@ -2,11 +2,9 @@ package transport
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/pkg/kithelper"
 	"github.com/falmar/otel-trivago/internal/rooms/endpoint"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/roompb"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
-	"go.opentelemetry.io/otel/trace"
 )
 
 var _ roompb.RoomServiceServer = (*grpcTransport)(nil)
@@ -17,14 +15,12 @@ type grpcTransport struct {
 	roompb.UnimplementedRoomServiceServer
 }
 
-func NewGRPCServer(endpoints *endpoint.Endpoints, tr trace.Tracer) roompb.RoomServiceServer {
+func NewGRPCServer(endpoints *endpoint.Endpoints) roompb.RoomServiceServer {
 	return &grpcTransport{
 		listRooms: kitgrpc.NewServer(
 			endpoints.ListEndpoint,
 			decodeListRoomsRequest,
 			encodeListRoomsResponse,
-			kitgrpc.ServerBefore(kithelper.SpanTraceBefore(tr, "rooms.grpc.ListRooms")),
-			kitgrpc.ServerAfter(kithelper.SpanTraceAfter),
 		),
 	}
 }

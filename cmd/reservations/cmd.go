@@ -101,8 +101,8 @@ var reservationCmd = &cobra.Command{
 				return err
 			}
 
-			endpoints := endpoint.New(otpl.Tracer, svc)
-			grpcService = transport.NewGRPCServer(otpl.Tracer, endpoints)
+			endpoints := endpoint.New(svc)
+			grpcService = transport.NewGRPCServer(endpoints)
 		}
 		// --
 

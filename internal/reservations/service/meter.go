@@ -8,10 +8,10 @@ import (
 type serviceMeter struct {
 	svc Service
 
-	listReservationsCounter  metric.Int64Counter
-	createReservationCounter metric.Int64Counter
+	listReservationsCounter    metric.Int64Counter
+	listReservationsErrCounter metric.Int64Counter
 
-	listReservationsErrCounter  metric.Int64Counter
+	createReservationCounter    metric.Int64Counter
 	createReservationErrCounter metric.Int64Counter
 }
 
@@ -23,8 +23,7 @@ func NewMeter(svc Service, mt metric.Meter) (Service, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	svcMeter.listReservationsErrCounter, err = mt.Int64Counter("svc.create_reservation.error")
+	svcMeter.listReservationsErrCounter, err = mt.Int64Counter("svc.list_reservations.error")
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +32,6 @@ func NewMeter(svc Service, mt metric.Meter) (Service, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	svcMeter.createReservationErrCounter, err = mt.Int64Counter("svc.create_reservation.error")
 	if err != nil {
 		return nil, err

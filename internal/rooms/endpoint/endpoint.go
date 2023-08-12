@@ -5,7 +5,6 @@ import (
 	"github.com/falmar/otel-trivago/internal/rooms/service"
 	"github.com/falmar/otel-trivago/internal/rooms/types"
 	kitendpoint "github.com/go-kit/kit/endpoint"
-	"go.opentelemetry.io/otel/trace"
 )
 
 var _ service.Service = (*Endpoints)(nil)
@@ -14,12 +13,9 @@ type Endpoints struct {
 	ListEndpoint kitendpoint.Endpoint
 }
 
-func New(svc service.Service, tr trace.Tracer) *Endpoints {
+func New(svc service.Service) *Endpoints {
 	return &Endpoints{
-		ListEndpoint: MakeTracerEndpointMiddleware(
-			"rooms.endpoint.ListRooms", tr,
-			MakeListEndpoint(svc),
-		),
+		ListEndpoint: MakeListEndpoint(svc),
 	}
 }
 

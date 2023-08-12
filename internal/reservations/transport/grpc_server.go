@@ -2,11 +2,10 @@ package transport
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/pkg/kithelper"
 	"github.com/falmar/otel-trivago/internal/reservations/endpoint"
+	"github.com/falmar/otel-trivago/pkg/pkg/kithelper"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
-	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -19,21 +18,17 @@ type grpcTransport struct {
 	reservationpb.UnimplementedReservationServiceServer
 }
 
-func NewGRPCServer(tr trace.Tracer, endpoints *endpoint.Endpoints) reservationpb.ReservationServiceServer {
+func NewGRPCServer(endpoints *endpoint.Endpoints) reservationpb.ReservationServiceServer {
 	return &grpcTransport{
 		create: kitgrpc.NewServer(
 			endpoints.CreateEndpoint,
 			decodeCreateRequest,
 			encodeCreateResponse,
-			kitgrpc.ServerBefore(kithelper.SpanTraceBefore(tr, "reservations.grpc.CreateReservation")),
-			kitgrpc.ServerAfter(kithelper.SpanTraceAfter),
 		),
 		list: kitgrpc.NewServer(
 			endpoints.ListEndpoint,
 			decodeListRequest,
 			encodeListResponse,
-			kitgrpc.ServerBefore(kithelper.SpanTraceBefore(tr, "reservations.grpc.ListReservations")),
-			kitgrpc.ServerAfter(kithelper.SpanTraceAfter),
 		),
 	}
 }

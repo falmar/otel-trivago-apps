@@ -38,6 +38,9 @@ spec:
         - name: room
           imagePullPolicy: Always
           image: docker.io/falmar/otel-trivago:room
+          env:
+            - name: PROMETHEUS_METRICS_PORT
+              value: "9090"
           ports:
             - containerPort: 80
               name: grpc
