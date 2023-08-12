@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
@@ -28,11 +29,18 @@ func (s *svcTracer) ListStays(ctx context.Context, input *ListStaysInput) (*List
 	out, err := s.svc.ListStays(ctx, input)
 
 	defer func() {
-		span.SetAttributes(
-			attribute.String("input.room_id", input.RoomID.String()),
-			attribute.String("input.reservation_id", input.ReservationID.String()),
+		attr := []attribute.KeyValue{
 			attribute.Int64("out.total", out.Total),
-		)
+		}
+
+		if input.RoomID != uuid.Nil {
+			attr = append(attr, attribute.String("input.room_id", input.RoomID.String()))
+		}
+		if input.ReservationID != uuid.Nil {
+			attr = append(attr, attribute.String("input.reservation_id", input.ReservationID.String()))
+		}
+
+		span.SetAttributes(attr...)
 
 		if err != nil {
 			span.RecordError(err)
