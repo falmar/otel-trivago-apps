@@ -26,10 +26,15 @@ func (s *serviceTracer) ListRooms(ctx context.Context, input *ListRoomsInput) (*
 	out, err := s.svc.ListRooms(ctx, input)
 
 	defer func() {
-		span.SetAttributes(
-			attribute.Int64("input.capacity", input.Capacity),
+		attr := []attribute.KeyValue{
 			attribute.Int64("output.count", out.Total),
-		)
+		}
+
+		if input.Capacity != 0 {
+			attr = append(attr, attribute.Int64("input.capacity", input.Capacity))
+		}
+
+		span.SetAttributes(attr...)
 
 		if err != nil {
 			span.RecordError(err)

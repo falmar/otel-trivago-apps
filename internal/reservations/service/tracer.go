@@ -28,12 +28,18 @@ func (t *svcTracer) ListReservations(ctx context.Context, input *ListReservation
 	out, err := t.svc.ListReservations(ctx, input)
 
 	defer func() {
-		span.SetAttributes(
-			attribute.Int64("input.start", input.Start.Unix()),
-			attribute.Int64("input.end", input.End.Unix()),
-			attribute.Float64("input.days", input.End.Sub(input.Start).Hours()/24),
+		attr := []attribute.KeyValue{
 			attribute.Int("output.count", len(out.Reservations)),
-		)
+		}
+
+		if !input.Start.IsZero() {
+			attr = append(attr, attribute.Int64("input.start", input.Start.Unix()))
+		}
+		if !input.End.IsZero() {
+			attr = append(attr, attribute.Int64("input.end", input.End.Unix()))
+		}
+
+		span.SetAttributes(attr...)
 		if err != nil {
 			span.RecordError(err)
 			span.SetStatus(codes.Error, "failed to list reservations")
