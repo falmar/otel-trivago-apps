@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/stay/repo"
-	"github.com/falmar/otel-trivago/internal/stay/types"
+	"github.com/falmar/otel-trivago/internal/stays/repo"
+	"github.com/falmar/otel-trivago/internal/stays/types"
 	"github.com/google/uuid"
 	"time"
 )

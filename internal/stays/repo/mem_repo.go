@@ -3,7 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
-	"github.com/falmar/otel-trivago/internal/stay/types"
+	"github.com/falmar/otel-trivago/internal/stays/types"
 	"github.com/google/uuid"
 	"sync"
 	"time"
