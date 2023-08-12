@@ -8,6 +8,7 @@ import (
 type Repository interface {
 	List(ctx context.Context, options *ListOptions) ([]*types.Stay, error)
 	Create(ctx context.Context, stay *types.Stay) error
+	Update(ctx context.Context, stay *types.Stay) error
 }
 
 type ListOptions struct{}

@@ -25,3 +25,7 @@ func (m *memRepository) List(ctx context.Context, options *ListOptions) ([]*type
 func (m *memRepository) Create(ctx context.Context, stay *types.Stay) error {
 	panic("implement me")
 }
+
+func (m *memRepository) Update(ctx context.Context, stay *types.Stay) error {
+	panic("implement me")
+}
