@@ -20,7 +20,7 @@ func NewTracer(svc Service, tr trace.Tracer) Service {
 }
 
 func (s *serviceTracer) ListRooms(ctx context.Context, input *ListRoomsInput) (*ListRoomsOutput, error) {
-	ctx, span := s.tr.Start(ctx, "rooms.svc.ListRooms")
+	ctx, span := s.tr.Start(ctx, "svc.ListRooms")
 	defer span.End()
 
 	out, err := s.svc.ListRooms(ctx, input)

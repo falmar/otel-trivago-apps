@@ -23,7 +23,7 @@ type svcTracer struct {
 }
 
 func (s *svcTracer) ListStays(ctx context.Context, input *ListStaysInput) (*ListStaysOutput, error) {
-	ctx, span := s.tr.Start(ctx, "stays.svc.ListStays")
+	ctx, span := s.tr.Start(ctx, "svc.ListStays")
 	defer span.End()
 
 	out, err := s.svc.ListStays(ctx, input)
@@ -52,8 +52,9 @@ func (s *svcTracer) ListStays(ctx context.Context, input *ListStaysInput) (*List
 }
 
 func (s *svcTracer) CreateStay(ctx context.Context, input *CreateStayInput) (*CreateStayOutput, error) {
-	ctx, span := s.tr.Start(ctx, "stays.svc.CreateStay")
+	ctx, span := s.tr.Start(ctx, "svc.CreateStay")
 	defer span.End()
+
 	out, err := s.svc.CreateStay(ctx, input)
 
 	defer func() {
@@ -74,7 +75,7 @@ func (s *svcTracer) CreateStay(ctx context.Context, input *CreateStayInput) (*Cr
 }
 
 func (s *svcTracer) UpdateStay(ctx context.Context, input *UpdateStayInput) (*UpdateStayOutput, error) {
-	ctx, span := s.tr.Start(ctx, "stays.svc.UpdateStay")
+	ctx, span := s.tr.Start(ctx, "svc.UpdateStay")
 	defer span.End()
 
 	out, err := s.svc.UpdateStay(ctx, input)

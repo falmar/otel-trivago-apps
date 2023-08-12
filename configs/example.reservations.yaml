@@ -3,7 +3,7 @@ service:
   port: "8080"
 
 # grpc endpoint for the otpl collector
-otpl_endpoint: "http://localhost:4317"
+otpl_endpoint: "localhost:4317"
 
 prometheus:
   metrics:

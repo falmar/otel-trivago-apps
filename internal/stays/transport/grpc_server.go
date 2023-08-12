@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/falmar/otel-trivago/internal/stays/endpoint"
 	"github.com/falmar/otel-trivago/internal/stays/types"
+	"github.com/falmar/otel-trivago/pkg/pkg/kithelper"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/staypb"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -42,7 +43,7 @@ type grpcServer struct {
 func (g *grpcServer) ListStays(ctx context.Context, request *staypb.ListStaysRequest) (*staypb.ListStaysResponse, error) {
 	ctx, resp, err := g.list.ServeGRPC(ctx, request)
 	if err != nil {
-		return nil, err
+		return nil, kithelper.EncodeError(ctx, err)
 	}
 
 	return resp.(*staypb.ListStaysResponse), nil
@@ -51,7 +52,7 @@ func (g *grpcServer) ListStays(ctx context.Context, request *staypb.ListStaysReq
 func (g *grpcServer) CreateStay(ctx context.Context, request *staypb.CreateStayRequest) (*staypb.CreateStayResponse, error) {
 	ctx, resp, err := g.create.ServeGRPC(ctx, request)
 	if err != nil {
-		return nil, err
+		return nil, kithelper.EncodeError(ctx, err)
 	}
 
 	return resp.(*staypb.CreateStayResponse), nil
@@ -60,7 +61,7 @@ func (g *grpcServer) CreateStay(ctx context.Context, request *staypb.CreateStayR
 func (g *grpcServer) UpdateStay(ctx context.Context, request *staypb.UpdateStayRequest) (*staypb.UpdateStayResponse, error) {
 	ctx, resp, err := g.update.ServeGRPC(ctx, request)
 	if err != nil {
-		return nil, err
+		return nil, kithelper.EncodeError(ctx, err)
 	}
 
 	return resp.(*staypb.UpdateStayResponse), nil

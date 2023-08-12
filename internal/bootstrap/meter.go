@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/prometheus"
 	"go.opentelemetry.io/otel/metric"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
@@ -18,6 +19,10 @@ func NewMeterReader() (*prometheus.Exporter, error) {
 	return prometheus.New()
 }
 
-func InitMeter(name string, mp metric.MeterProvider) metric.Meter {
-	return mp.Meter(name)
+func InitMeter(mp metric.MeterProvider, name, version string, attr []attribute.KeyValue) metric.Meter {
+	return mp.Meter(
+		name,
+		metric.WithInstrumentationVersion(version),
+		metric.WithInstrumentationAttributes(attr...),
+	)
 }

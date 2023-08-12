@@ -48,6 +48,7 @@ func (m *memRepository) GetById(_ context.Context, id uuid.UUID) (*types.Stay, e
 
 	stay, ok := m.data[id.String()]
 	if !ok {
+		m.mu.RUnlock()
 		return nil, &types.ErrStayNotFound{Message: fmt.Sprintf("stay [%s] not found", id.String())}
 	}
 
@@ -62,7 +63,6 @@ func (m *memRepository) Create(_ context.Context, stay *types.Stay) error {
 	stay.ID = uuid.New()
 	stay.CreatedAt = time.Now()
 	stay.UpdatedAt = stay.CreatedAt
-
 	m.data[stay.ID.String()] = stay
 
 	m.mu.Unlock()
@@ -74,7 +74,6 @@ func (m *memRepository) Update(_ context.Context, stay *types.Stay) error {
 	m.mu.Lock()
 
 	stay.UpdatedAt = time.Now()
-
 	m.data[stay.ID.String()] = stay
 
 	m.mu.Unlock()

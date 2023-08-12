@@ -22,7 +22,7 @@ type svcTracer struct {
 }
 
 func (t *svcTracer) ListReservations(ctx context.Context, input *ListReservationsInput) (*ListReservationsOutput, error) {
-	ctx, span := t.tracer.Start(ctx, "reservations.svc.ListRooms")
+	ctx, span := t.tracer.Start(ctx, "svc.ListRooms")
 	defer span.End()
 
 	out, err := t.svc.ListReservations(ctx, input)
@@ -50,7 +50,7 @@ func (t *svcTracer) ListReservations(ctx context.Context, input *ListReservation
 }
 
 func (t *svcTracer) CreateReservation(ctx context.Context, input *CreateReservationInput) (*CreateReservationOutput, error) {
-	ctx, span := t.tracer.Start(ctx, "reservations.svc.CreateReservation")
+	ctx, span := t.tracer.Start(ctx, "svc.CreateReservation")
 	defer span.End()
 
 	out, err := t.svc.CreateReservation(ctx, input)

@@ -14,6 +14,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel/attribute"
+	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -30,11 +32,25 @@ var staysCmd = &cobra.Command{
 		ctx, cancel := context.WithCancel(cmd.Context())
 		defer cancel()
 
+		version := viper.GetString("version")
+		if version == "" {
+			version = "0.0.0"
+		}
+
 		// tracer/meter setup
 		var otpl *bootstrap.OTPL
 		{
 			var err error = nil
-			otpl, err = bootstrap.NewOTPL(ctx, svcName)
+			otpl, err = bootstrap.NewOTPL(ctx, &bootstrap.OTPLConfig{
+				ServiceName:          svcName,
+				ServiceVersion:       version,
+				GRPCExporterEndpoint: viper.GetString("otpl_endpoint"),
+				InstrumentAttributes: []attribute.KeyValue{
+					semconv.ServiceName(svcName),
+					semconv.ServiceVersion(version),
+					semconv.DeploymentEnvironment("dev"),
+				},
+			})
 			if err != nil {
 				return fmt.Errorf("failed to bootstrap otel: %w", err)
 			}
@@ -84,6 +100,10 @@ var staysCmd = &cobra.Command{
 				Repo: repo.NewMemRepo(),
 			})
 			svc = service.NewTracer(svc, otpl.Tracer)
+			svc, err := service.NewMeter(svc, otpl.Meter)
+			if err != nil {
+				return err
+			}
 
 			endpoints := endpoint.New(svc)
 			grpcService = transport.NewGRPCServer(endpoints)

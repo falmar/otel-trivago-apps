@@ -3,10 +3,14 @@ package bootstrap
 import (
 	"context"
 	"fmt"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 	"go.opentelemetry.io/otel/trace"
+	"os"
 )
 
 type OTPL struct {
@@ -29,18 +33,39 @@ func (o *OTPL) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-func NewOTPL(ctx context.Context, svcName string) (*OTPL, error) {
-	re, err := NewResource(svcName)
+type OTPLConfig struct {
+	ServiceName          string
+	ServiceVersion       string
+	GRPCExporterEndpoint string
+	InstrumentAttributes []attribute.KeyValue
+}
+
+func NewOTPL(ctx context.Context, config *OTPLConfig) (*OTPL, error) {
+	re, err := NewResource(config.InstrumentAttributes)
 	if err != nil {
 		return nil, err
 	}
 
-	tp, err := NewTracerProvider(ctx, re)
+	// tracing
+	var ex sdktrace.SpanExporter
+	if config.GRPCExporterEndpoint != "" {
+		ex, err = NewGRPCExporter(ctx, config.GRPCExporterEndpoint)
+	} else {
+		ex, err = NewStdoutExporter(os.Stdout)
+	}
 	if err != nil {
 		return nil, err
 	}
-	tr := InitTracer(svcName, tp)
 
+	tp := sdktrace.NewTracerProvider(
+		sdktrace.WithSampler(sdktrace.AlwaysSample()),
+		sdktrace.WithResource(re),
+		sdktrace.WithBatcher(ex),
+	)
+	tr := InitTracer(tp, config.ServiceName, config.ServiceVersion, config.InstrumentAttributes)
+	// --
+
+	// metrics
 	mr, err := NewMeterReader()
 	if err != nil {
 		return nil, err
@@ -51,7 +76,8 @@ func NewOTPL(ctx context.Context, svcName string) (*OTPL, error) {
 		return nil, err
 	}
 
-	mt := InitMeter(svcName, mp)
+	mt := InitMeter(mp, config.ServiceName, config.ServiceVersion, config.InstrumentAttributes)
+	// --
 
 	return &OTPL{
 		Tracer: tr,
@@ -60,4 +86,14 @@ func NewOTPL(ctx context.Context, svcName string) (*OTPL, error) {
 		mr: mr,
 		tp: tp,
 	}, nil
+}
+
+func NewResource(attr []attribute.KeyValue) (*resource.Resource, error) {
+	return resource.Merge(
+		resource.Default(),
+		resource.NewWithAttributes(
+			semconv.SchemaURL,
+			attr...,
+		),
+	)
 }

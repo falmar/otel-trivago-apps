@@ -14,17 +14,17 @@ func NewMeter(svc Service, mt metric.Meter) (Service, error) {
 		svc: svc,
 	}
 
-	metered.countListStays, err = mt.Int64Counter("stays.svc.list_stays")
+	metered.countListStays, err = mt.Int64Counter("list_stays")
 	if err != nil {
 		return nil, err
 	}
 
-	metered.countCreateStay, err = mt.Int64Counter("stays.svc.create_stay")
+	metered.countCreateStay, err = mt.Int64Counter("create_stay")
 	if err != nil {
 		return nil, err
 	}
 
-	metered.countUpdateStay, err = mt.Int64Counter("stays.svc.update_stay")
+	metered.countUpdateStay, err = mt.Int64Counter("update_stay")
 	if err != nil {
 		return nil, err
 	}

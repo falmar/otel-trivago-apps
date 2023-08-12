@@ -17,12 +17,12 @@ func NewMeter(svc Service, mt metric.Meter) (Service, error) {
 	var err error = nil
 	svcMeter := &serviceMeter{svc: svc}
 
-	svcMeter.listReservationsCounter, err = mt.Int64Counter("reservations.svc.list_reservations")
+	svcMeter.listReservationsCounter, err = mt.Int64Counter("list_reservations")
 	if err != nil {
 		return nil, err
 	}
 
-	svcMeter.createReservationCounter, err = mt.Int64Counter("reservations.svc.create_reservation")
+	svcMeter.createReservationCounter, err = mt.Int64Counter("create_reservation")
 	if err != nil {
 		return nil, err
 	}
@@ -35,6 +35,7 @@ func (s *serviceMeter) ListReservations(ctx context.Context, input *ListReservat
 
 	defer func() {
 		s.listReservationsCounter.Add(ctx, 1, metric.WithAttributes(
+			attribute.String("scope", "service"),
 			attribute.Bool("error", err != nil),
 		))
 	}()
@@ -47,6 +48,7 @@ func (s *serviceMeter) CreateReservation(ctx context.Context, input *CreateReser
 
 	defer func() {
 		s.createReservationCounter.Add(ctx, 1, metric.WithAttributes(
+			attribute.String("scope", "service"),
 			attribute.Bool("error", err != nil),
 		))
 	}()
