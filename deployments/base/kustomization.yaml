@@ -3,3 +3,11 @@ kind: Kustomization
 resources:
   - svc-reservation.yaml
   - svc-room.yaml
+
+images:
+  - name: reservation-image
+    newName: docker.io/falmar/otel-trivago
+    newTag: reservation
+  - name: room-image
+    newName: docker.io/falmar/otel-trivago
+    newTag: room

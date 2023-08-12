@@ -14,6 +14,9 @@ spec:
         - podSelector:
             matchLabels:
               otel-trivago/app: "reservation"
+      ports:
+        - protocol: TCP
+          port: 80
 ---
 
 apiVersion: apps/v1
@@ -37,7 +40,7 @@ spec:
       containers:
         - name: room
           imagePullPolicy: Always
-          image: docker.io/falmar/otel-trivago:room
+          image: room-image
           env:
             - name: PROMETHEUS_METRICS_PORT
               value: "9090"

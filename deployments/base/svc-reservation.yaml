@@ -20,7 +20,7 @@ spec:
       containers:
         - name: reservation
           imagePullPolicy: Always
-          image: docker.io/falmar/otel-trivago:reservation
+          image: reservation-image
           env:
             - name: PROMETHEUS_METRICS_PORT
               value: "9090"
