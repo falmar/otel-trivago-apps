@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/falmar/otel-trivago/internal/bootstrap"
 	"github.com/falmar/otel-trivago/internal/reservations/endpoint"
-	"github.com/falmar/otel-trivago/internal/reservations/reservationrepo"
+	"github.com/falmar/otel-trivago/internal/reservations/repo"
 	"github.com/falmar/otel-trivago/internal/reservations/service"
 	"github.com/falmar/otel-trivago/internal/reservations/transport"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb"
@@ -81,7 +81,7 @@ var reservationCmd = &cobra.Command{
 		var grpcService reservationpb.ReservationServiceServer
 		{
 			svc := service.NewService(&service.Config{
-				ResvRepo: reservationrepo.NewMem(),
+				ResvRepo: repo.NewMem(),
 			})
 			svc = service.NewTracer(svc, otpl.Tracer)
 			svc, err := service.NewMeter(svc, otpl.Meter)

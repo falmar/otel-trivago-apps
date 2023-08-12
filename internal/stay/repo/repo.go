@@ -11,4 +11,7 @@ type Repository interface {
 	Update(ctx context.Context, stay *types.Stay) error
 }
 
-type ListOptions struct{}
+type ListOptions struct {
+	RoomID        string
+	ReservationID string
+}

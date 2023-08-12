@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/reservations/reservationrepo"
+	"github.com/falmar/otel-trivago/internal/reservations/repo"
 	"github.com/falmar/otel-trivago/internal/reservations/types"
 	"github.com/google/uuid"
 	"time"
@@ -16,10 +16,10 @@ type Service interface {
 }
 
 type service struct {
-	resvRepo reservationrepo.Repository
+	resvRepo repo.Repository
 }
 type Config struct {
-	ResvRepo reservationrepo.Repository
+	ResvRepo repo.Repository
 }
 
 func NewService(cfg *Config) Service {

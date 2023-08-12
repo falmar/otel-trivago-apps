@@ -14,4 +14,7 @@ type Stay struct {
 	CheckOut time.Time
 
 	Notes string
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

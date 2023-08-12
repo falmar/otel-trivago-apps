@@ -1,4 +1,4 @@
-package reservationrepo
+package repo
 
 import (
 	"context"
