@@ -115,16 +115,8 @@ func mapReservation(r *types.Reservation, rpb *reservationpb.Reservation) {
 	rpb.Id = r.ID.String()
 	rpb.RoomId = r.RoomID.String()
 	rpb.Status = reservationpb.ReservationStatus(r.Status)
-	rpb.StartDate = &timestamppb.Timestamp{
-		Seconds: r.Start.Unix(),
-	}
-	rpb.EndDate = &timestamppb.Timestamp{
-		Seconds: r.End.Unix(),
-	}
-	rpb.CreatedAt = &timestamppb.Timestamp{
-		Seconds: r.CreatedAt.Unix(),
-	}
-	rpb.UpdatedAt = &timestamppb.Timestamp{
-		Seconds: r.UpdatedAt.Unix(),
-	}
+	rpb.StartDate = timestamppb.New(r.Start)
+	rpb.EndDate = timestamppb.New(r.End)
+	rpb.CreatedAt = timestamppb.New(r.CreatedAt)
+	rpb.UpdatedAt = timestamppb.New(r.UpdatedAt)
 }

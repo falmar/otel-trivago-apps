@@ -50,18 +50,18 @@ func (g *grpcClient) ListRooms(ctx context.Context, input *service.ListRoomsInpu
 
 func decodeListRoomsResponse(_ context.Context, response interface{}) (request interface{}, err error) {
 	respb := response.(*roompb.ListRoomsResponse)
+	resp := &endpoint.ListRoomsResponse{
+		Rooms: make([]*types.Room, respb.Total),
+		Total: respb.Total,
+	}
 
 	var rooms []*types.Room
 
-	for _, rpb := range respb.Rooms {
+	for i, rpb := range respb.Rooms {
 		r := &types.Room{}
 		mapRoomPB(rpb, r)
 
-		rooms = append(rooms, r)
-	}
-
-	resp := &endpoint.ListRoomsResponse{
-		Rooms: rooms,
+		rooms[i] = r
 	}
 
 	return resp, nil

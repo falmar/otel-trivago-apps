@@ -33,6 +33,7 @@ type ListRoomsInput struct {
 }
 type ListRoomsOutput struct {
 	Rooms []*types.Room
+	Total int64
 }
 
 func (s *service) ListRooms(ctx context.Context, input *ListRoomsInput) (*ListRoomsOutput, error) {
@@ -47,5 +48,6 @@ func (s *service) ListRooms(ctx context.Context, input *ListRoomsInput) (*ListRo
 
 	return &ListRoomsOutput{
 		Rooms: rooms,
+		Total: int64(len(rooms)),
 	}, nil
 }

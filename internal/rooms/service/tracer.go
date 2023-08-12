@@ -28,7 +28,7 @@ func (s *serviceTracer) ListRooms(ctx context.Context, input *ListRoomsInput) (*
 	defer func() {
 		span.SetAttributes(
 			attribute.Int64("input.capacity", input.Capacity),
-			attribute.Int("output.count", len(out.Rooms)),
+			attribute.Int64("output.count", out.Total),
 		)
 
 		if err != nil {

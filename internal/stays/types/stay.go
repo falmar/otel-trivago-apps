@@ -13,7 +13,7 @@ type Stay struct {
 	CheckIn  time.Time
 	CheckOut time.Time
 
-	Notes string
+	Note string
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

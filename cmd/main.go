@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/falmar/otel-trivago/cmd/reservations"
 	"github.com/falmar/otel-trivago/cmd/rooms"
+	"github.com/falmar/otel-trivago/cmd/stays"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
@@ -21,6 +22,7 @@ func main() {
 
 	rootCmd.AddCommand(reservationsvc.Cmd())
 	rootCmd.AddCommand(rooms.Cmd())
+	rootCmd.AddCommand(stays.Cmd())
 
 	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		log.Println(err)

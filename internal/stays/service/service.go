@@ -76,7 +76,7 @@ func (s *service) CreateStay(ctx context.Context, input *CreateStayInput) (*Crea
 		RoomID:        input.RoomID,
 		ReservationID: input.ReservationID,
 		CheckIn:       input.CheckIn,
-		Notes:         input.Notes,
+		Note:          input.Notes,
 	}
 
 	err := s.repo.Create(ctx, stay)
@@ -113,7 +113,7 @@ func (s *service) UpdateStay(ctx context.Context, input *UpdateStayInput) (*Upda
 		stay.CheckOut = input.CheckOut
 	}
 	if input.Notes != "" {
-		stay.Notes = input.Notes
+		stay.Note = input.Notes
 	}
 
 	err = s.repo.Update(ctx, stay)

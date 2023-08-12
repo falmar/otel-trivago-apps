@@ -1,0 +1,12 @@
+service:
+  name: "stays"
+  port: "8082"
+
+# grpc endpoint for the otpl collector
+otpl_endpoint: "http://localhost:4317"
+
+prometheus:
+  metrics:
+    enable: false
+    port: "8192"
+    path: "/metrics"

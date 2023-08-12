@@ -50,19 +50,19 @@ func decodeListRoomsRequest(_ context.Context, request interface{}) (interface{}
 
 func encodeListRoomsResponse(_ context.Context, response interface{}) (interface{}, error) {
 	resp := response.(*endpoint.ListRoomsResponse)
+	respb := &roompb.ListRoomsResponse{
+		Rooms: make([]*roompb.Room, resp.Total),
+		Total: resp.Total,
+	}
 
-	var rooms []*roompb.Room
-
-	for _, r := range resp.Rooms {
+	for i, r := range resp.Rooms {
 		rpb := &roompb.Room{}
 		mapRoom(r, rpb)
 
-		rooms = append(rooms, rpb)
+		respb.Rooms[i] = rpb
 	}
 
-	return &roompb.ListRoomsResponse{
-		Rooms: rooms,
-	}, nil
+	return respb, nil
 }
 
 func mapRoom(r *types.Room, rpb *roompb.Room) {

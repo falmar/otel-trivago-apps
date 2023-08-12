@@ -133,6 +133,9 @@ type UpdateStayRequest struct {
 	CheckOut time.Time
 	Notes    string
 }
+type UpdateStayResponse struct {
+	Stay *types.Stay
+}
 
 func MakeUpdateStayEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
@@ -167,7 +170,7 @@ func MakeUpdateStayEndpoint(svc service.Service) kitendpoint.Endpoint {
 			return nil, err
 		}
 
-		return &CreateStayResponse{
+		return &UpdateStayResponse{
 			Stay: out.Stay,
 		}, nil
 	}

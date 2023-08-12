@@ -25,6 +25,7 @@ type ListRoomsRequest struct {
 
 type ListRoomsResponse struct {
 	Rooms []*types.Room
+	Total int64
 }
 
 func MakeListEndpoint(svc service.Service) kitendpoint.Endpoint {
@@ -42,6 +43,7 @@ func MakeListEndpoint(svc service.Service) kitendpoint.Endpoint {
 
 		return &ListRoomsResponse{
 			Rooms: output.Rooms,
+			Total: output.Total,
 		}, nil
 	}
 }

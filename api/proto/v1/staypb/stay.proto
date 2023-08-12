@@ -8,8 +8,8 @@ package stay;
 
 message Stay {
   string id = 1;
-  string roomId = 2;
-  string reservationId = 3;
+  string room_id = 2;
+  string reservation_id = 3;
 
   google.protobuf.Timestamp check_in = 4;
   google.protobuf.Timestamp check_out = 5;
@@ -27,8 +27,8 @@ service StayService {
 }
 
 message ListStaysRequest {
-  string roomId = 1;
-  string reservationId = 2;
+  string room_id = 1;
+  string reservation_id = 2;
   int64 limit = 3;
   int64 offset = 4;
 }
@@ -38,8 +38,8 @@ message ListStaysResponse {
 }
 
 message CreateStayRequest {
-  string roomId = 1;
-  string reservationId = 2;
+  string room_id = 1;
+  string reservation_id = 2;
 
   google.protobuf.Timestamp check_in = 3;
 
@@ -51,7 +51,7 @@ message CreateStayResponse {
 
 message UpdateStayRequest {
   string id = 1;
-  string roomId = 2;
+  string room_id = 2;
 
   google.protobuf.Timestamp check_out = 3;
 
