@@ -31,7 +31,6 @@ type ListRoomsInput struct {
 	Limit    int64
 	Offset   int64
 }
-
 type ListRoomsOutput struct {
 	Rooms []*types.Room
 }

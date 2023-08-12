@@ -18,7 +18,6 @@ type Service interface {
 type service struct {
 	resvRepo reservationrepo.Repository
 }
-
 type Config struct {
 	ResvRepo reservationrepo.Repository
 }
@@ -36,7 +35,6 @@ type ListReservationsInput struct {
 	Limit  int64
 	Offset int64
 }
-
 type ListReservationsOutput struct {
 	Reservations []*types.Reservation
 	Total        int64
@@ -60,7 +58,6 @@ type CreateReservationInput struct {
 	Start time.Time
 	End   time.Time
 }
-
 type CreateReservationOutput struct {
 	Reservation *types.Reservation
 }
