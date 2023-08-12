@@ -27,6 +27,7 @@ message Reservation {
   google.protobuf.Timestamp end_date = 5;
 
   google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
 }
 
 message ListReservationRequest {

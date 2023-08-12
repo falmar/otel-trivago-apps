@@ -10,9 +10,9 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-var _ reservationpb.ReservationServiceServer = (*grpcTransport)(nil)
+var _ reservationpb.ReservationServiceServer = (*grpcServer)(nil)
 
-type grpcTransport struct {
+type grpcServer struct {
 	create kitgrpc.Handler
 	list   kitgrpc.Handler
 
@@ -20,7 +20,7 @@ type grpcTransport struct {
 }
 
 func NewGRPCServer(endpoints *endpoint.Endpoints) reservationpb.ReservationServiceServer {
-	return &grpcTransport{
+	return &grpcServer{
 		create: kitgrpc.NewServer(
 			endpoints.CreateEndpoint,
 			decodeCreateRequest,
@@ -34,7 +34,7 @@ func NewGRPCServer(endpoints *endpoint.Endpoints) reservationpb.ReservationServi
 	}
 }
 
-func (g *grpcTransport) CreateReservation(ctx context.Context, reservation *reservationpb.CreateReservationRequest) (*reservationpb.CreateReservationResponse, error) {
+func (g *grpcServer) CreateReservation(ctx context.Context, reservation *reservationpb.CreateReservationRequest) (*reservationpb.CreateReservationResponse, error) {
 	ctx, resp, err := g.create.ServeGRPC(ctx, reservation)
 	if err != nil {
 		return nil, kithelper.EncodeError(ctx, err)
@@ -43,7 +43,7 @@ func (g *grpcTransport) CreateReservation(ctx context.Context, reservation *rese
 	return resp.(*reservationpb.CreateReservationResponse), nil
 }
 
-func (g *grpcTransport) ListReservations(ctx context.Context, request *reservationpb.ListReservationRequest) (*reservationpb.ListReservationResponse, error) {
+func (g *grpcServer) ListReservations(ctx context.Context, request *reservationpb.ListReservationRequest) (*reservationpb.ListReservationResponse, error) {
 	ctx, resp, err := g.list.ServeGRPC(ctx, request)
 	if err != nil {
 		return nil, kithelper.EncodeError(ctx, err)
@@ -52,7 +52,7 @@ func (g *grpcTransport) ListReservations(ctx context.Context, request *reservati
 	return resp.(*reservationpb.ListReservationResponse), nil
 }
 
-func (g *grpcTransport) mustEmbedUnimplementedReservationServiceServer() {}
+func (g *grpcServer) mustEmbedUnimplementedReservationServiceServer() {}
 
 func decodeListRequest(_ context.Context, request interface{}) (interface{}, error) {
 	pbreq := request.(*reservationpb.ListReservationRequest)
@@ -123,5 +123,8 @@ func mapReservation(r *types.Reservation, rpb *reservationpb.Reservation) {
 	}
 	rpb.CreatedAt = &timestamppb.Timestamp{
 		Seconds: r.CreatedAt.Unix(),
+	}
+	rpb.UpdatedAt = &timestamppb.Timestamp{
+		Seconds: r.UpdatedAt.Unix(),
 	}
 }

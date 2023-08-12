@@ -7,8 +7,6 @@ import (
 	kitendpoint "github.com/go-kit/kit/endpoint"
 )
 
-var _ service.Service = (*Endpoints)(nil)
-
 type Endpoints struct {
 	ListEndpoint kitendpoint.Endpoint
 }
@@ -17,23 +15,6 @@ func New(svc service.Service) *Endpoints {
 	return &Endpoints{
 		ListEndpoint: MakeListEndpoint(svc),
 	}
-}
-
-func (e *Endpoints) ListRooms(ctx context.Context, input *service.ListRoomsInput) (*service.ListRoomsOutput, error) {
-	response, err := e.ListEndpoint(ctx, &ListRoomsRequest{
-		Capacity: input.Capacity,
-		Limit:    input.Limit,
-		Offset:   input.Offset,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp := response.(*ListRoomsResponse)
-
-	return &service.ListRoomsOutput{
-		Rooms: resp.Rooms,
-	}, nil
 }
 
 type ListRoomsRequest struct {

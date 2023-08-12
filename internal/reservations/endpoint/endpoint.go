@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-var _ service.Service = (*Endpoints)(nil)
-
 type Endpoints struct {
 	ListEndpoint   kitendpoint.Endpoint
 	CreateEndpoint kitendpoint.Endpoint
@@ -24,50 +22,12 @@ func New(svc service.Service) *Endpoints {
 	}
 }
 
-func (e *Endpoints) ListReservations(ctx context.Context, input *service.ListReservationsInput) (*service.ListReservationsOutput, error) {
-	response, err := e.ListEndpoint(ctx, &ListRequest{
-		Start:  input.Start,
-		End:    input.End,
-		Offset: input.Offset,
-		Limit:  input.Limit,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp := response.(*ListResponse)
-
-	return &service.ListReservationsOutput{
-		Reservations: resp.Reservations,
-		Total:        resp.Total,
-	}, nil
-}
-
-func (e *Endpoints) CreateReservation(ctx context.Context, input *service.CreateReservationInput) (*service.CreateReservationOutput, error) {
-	response, err := e.CreateEndpoint(ctx, &CreateRequest{
-		RoomID: input.RoomID.String(),
-
-		Start: input.Start,
-		End:   input.End,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp := response.(*CreateResponse)
-
-	return &service.CreateReservationOutput{
-		Reservation: resp.Reservation,
-	}, nil
-}
-
 type CreateRequest struct {
 	RoomID string
 
 	Start time.Time
 	End   time.Time
 }
-
 type CreateResponse struct {
 	Reservation *types.Reservation
 }
@@ -110,7 +70,6 @@ type ListRequest struct {
 	Offset int64
 	Limit  int64
 }
-
 type ListResponse struct {
 	Reservations []*types.Reservation
 	Total        int64

@@ -3,20 +3,21 @@ package transport
 import (
 	"context"
 	"github.com/falmar/otel-trivago/internal/rooms/endpoint"
+	"github.com/falmar/otel-trivago/internal/rooms/types"
 	"github.com/falmar/otel-trivago/pkg/proto/v1/roompb"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
 )
 
-var _ roompb.RoomServiceServer = (*grpcTransport)(nil)
+var _ roompb.RoomServiceServer = (*grpcServer)(nil)
 
-type grpcTransport struct {
+type grpcServer struct {
 	listRooms kitgrpc.Handler
 
 	roompb.UnimplementedRoomServiceServer
 }
 
 func NewGRPCServer(endpoints *endpoint.Endpoints) roompb.RoomServiceServer {
-	return &grpcTransport{
+	return &grpcServer{
 		listRooms: kitgrpc.NewServer(
 			endpoints.ListEndpoint,
 			decodeListRoomsRequest,
@@ -25,7 +26,7 @@ func NewGRPCServer(endpoints *endpoint.Endpoints) roompb.RoomServiceServer {
 	}
 }
 
-func (g *grpcTransport) ListRooms(ctx context.Context, request *roompb.ListRoomsRequest) (*roompb.ListRoomsResponse, error) {
+func (g *grpcServer) ListRooms(ctx context.Context, request *roompb.ListRoomsRequest) (*roompb.ListRoomsResponse, error) {
 	ctx, resp, err := g.listRooms.ServeGRPC(ctx, request)
 	if err != nil {
 		return nil, err
@@ -34,7 +35,7 @@ func (g *grpcTransport) ListRooms(ctx context.Context, request *roompb.ListRooms
 	return resp.(*roompb.ListRoomsResponse), nil
 }
 
-func (g *grpcTransport) mustEmbedUnimplementedRoomServiceServer() {}
+func (g *grpcServer) mustEmbedUnimplementedRoomServiceServer() {}
 
 func decodeListRoomsRequest(_ context.Context, request interface{}) (interface{}, error) {
 	reqpb := request.(*roompb.ListRoomsRequest)
@@ -53,14 +54,19 @@ func encodeListRoomsResponse(_ context.Context, response interface{}) (interface
 	var rooms []*roompb.Room
 
 	for _, r := range resp.Rooms {
-		rooms = append(rooms, &roompb.Room{
-			Id:          r.ID.String(),
-			Capacity:    r.Capacity,
-			CleanStatus: roompb.CleanStatus(r.CleanStatus),
-		})
+		rpb := &roompb.Room{}
+		mapRoom(r, rpb)
+
+		rooms = append(rooms, rpb)
 	}
 
 	return &roompb.ListRoomsResponse{
 		Rooms: rooms,
 	}, nil
+}
+
+func mapRoom(r *types.Room, rpb *roompb.Room) {
+	rpb.Id = r.ID.String()
+	rpb.Capacity = r.Capacity
+	rpb.CleanStatus = roompb.CleanStatus(r.CleanStatus)
 }
