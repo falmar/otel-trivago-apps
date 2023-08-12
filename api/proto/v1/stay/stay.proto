@@ -53,10 +53,9 @@ message UpdateStayRequest {
   string id = 1;
   string roomId = 2;
 
-  google.protobuf.Timestamp check_in = 3;
-  google.protobuf.Timestamp check_out = 4;
+  google.protobuf.Timestamp check_out = 3;
 
-  string note = 5;
+  string note = 4;
 }
 message UpdateStayResponse {
   Stay stay = 1;

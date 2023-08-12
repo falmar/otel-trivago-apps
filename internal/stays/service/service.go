@@ -94,7 +94,7 @@ type UpdateStayInput struct {
 	RoomID uuid.UUID
 
 	CheckOut time.Time
-	Note     string
+	Notes    string
 }
 type UpdateStayOutput struct {
 	Stay *types.Stay
@@ -112,8 +112,8 @@ func (s *service) UpdateStay(ctx context.Context, input *UpdateStayInput) (*Upda
 	if !input.CheckOut.IsZero() {
 		stay.CheckOut = input.CheckOut
 	}
-	if input.Note != "" {
-		stay.Notes = input.Note
+	if input.Notes != "" {
+		stay.Notes = input.Notes
 	}
 
 	err = s.repo.Update(ctx, stay)
