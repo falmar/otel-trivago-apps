@@ -8,14 +8,6 @@ import (
 
 var _ Service = (*service)(nil)
 
-type Service interface {
-	ListRooms(ctx context.Context, input *ListRoomsInput) (*ListRoomsOutput, error)
-}
-
-type service struct {
-	roomRepo roomrepo.Repository
-}
-
 type Config struct {
 	RoomRepo roomrepo.Repository
 }
@@ -24,6 +16,14 @@ func New(config *Config) Service {
 	return &service{
 		roomRepo: config.RoomRepo,
 	}
+}
+
+type Service interface {
+	ListRooms(ctx context.Context, input *ListRoomsInput) (*ListRoomsOutput, error)
+}
+
+type service struct {
+	roomRepo roomrepo.Repository
 }
 
 type ListRoomsInput struct {

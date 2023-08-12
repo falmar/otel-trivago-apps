@@ -29,6 +29,9 @@ func (t *svcTracer) ListReservations(ctx context.Context, input *ListReservation
 
 	defer func() {
 		span.SetAttributes(
+			attribute.Int64("input.start", input.Start.Unix()),
+			attribute.Int64("input.end", input.End.Unix()),
+			attribute.Float64("input.days", input.End.Sub(input.Start).Hours()/24),
 			attribute.Int("output.count", len(out.Reservations)),
 		)
 		if err != nil {
@@ -48,7 +51,10 @@ func (t *svcTracer) CreateReservation(ctx context.Context, input *CreateReservat
 
 	defer func() {
 		span.SetAttributes(
-			attribute.String("output.room_id", input.RoomID.String()),
+			attribute.Int64("input.start", input.Start.Unix()),
+			attribute.Int64("input.end", input.End.Unix()),
+			attribute.Float64("input.days", input.End.Sub(input.Start).Hours()/24),
+			attribute.String("input.room_id", input.RoomID.String()),
 		)
 		if err != nil {
 			span.RecordError(err)
