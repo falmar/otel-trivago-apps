@@ -29,8 +29,9 @@ func NewService(cfg *Config) Service {
 }
 
 type ListReservationsInput struct {
-	Start time.Time
-	End   time.Time
+	RoomID uuid.UUID
+	Start  time.Time
+	End    time.Time
 
 	Limit  int64
 	Offset int64
@@ -41,7 +42,13 @@ type ListReservationsOutput struct {
 }
 
 func (s *service) ListReservations(ctx context.Context, input *ListReservationsInput) (*ListReservationsOutput, error) {
-	resv, err := s.resvRepo.List(ctx, input.Start, input.End)
+	resv, err := s.resvRepo.List(ctx, &repo.ListOptions{
+		RoomID: input.RoomID,
+		Start:  input.Start,
+		End:    input.End,
+		Limit:  input.Limit,
+		Offset: input.Offset,
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -57,7 +57,11 @@ func (g *grpcServer) mustEmbedUnimplementedReservationServiceServer() {}
 func decodeListRequest(_ context.Context, request interface{}) (interface{}, error) {
 	pbreq := request.(*reservationpb.ListReservationRequest)
 
-	req := &endpoint.ListRequest{}
+	req := &endpoint.ListRequest{
+		RoomID: pbreq.RoomId,
+		Limit:  pbreq.Limit,
+		Offset: pbreq.Offset,
+	}
 
 	if pbreq.StartDate != nil {
 		req.Start = pbreq.StartDate.AsTime().UTC()

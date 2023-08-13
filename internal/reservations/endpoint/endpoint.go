@@ -22,6 +22,57 @@ func New(svc service.Service) *Endpoints {
 	}
 }
 
+type ListRequest struct {
+	RoomID string
+	Offset int64
+	Limit  int64
+
+	Start time.Time
+	End   time.Time
+}
+type ListResponse struct {
+	Reservations []*types.Reservation
+	Total        int64
+}
+
+func makeListReservationsEndpoint(svc service.Service) kitendpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		var err error = nil
+		req := request.(*ListRequest)
+		in := &service.ListReservationsInput{
+			Start: req.Start,
+			End:   req.End,
+
+			Limit:  req.Limit,
+			Offset: req.Offset,
+		}
+
+		if in.Limit == 0 {
+			in.Limit = 10
+		}
+		if in.Offset < 0 {
+			in.Offset = 0
+		}
+
+		if req.RoomID != "" {
+			in.RoomID, err = uuid.Parse(req.RoomID)
+			if err != nil {
+				return nil, &kithelper.ErrInvalidArgument{Message: "room id must be a valid uuid"}
+			}
+		}
+
+		out, err := svc.ListReservations(ctx, in)
+		if err != nil {
+			return nil, err
+		}
+
+		return &ListResponse{
+			Reservations: out.Reservations,
+			Total:        out.Total,
+		}, nil
+	}
+}
+
 type CreateRequest struct {
 	RoomID string
 
@@ -59,40 +110,6 @@ func makeCreateReservationEndpoint(svc service.Service) kitendpoint.Endpoint {
 
 		return &CreateResponse{
 			Reservation: out.Reservation,
-		}, nil
-	}
-}
-
-type ListRequest struct {
-	Start time.Time
-	End   time.Time
-
-	Offset int64
-	Limit  int64
-}
-type ListResponse struct {
-	Reservations []*types.Reservation
-	Total        int64
-}
-
-func makeListReservationsEndpoint(svc service.Service) kitendpoint.Endpoint {
-	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(*ListRequest)
-
-		out, err := svc.ListReservations(ctx, &service.ListReservationsInput{
-			Start: req.Start,
-			End:   req.End,
-
-			Offset: req.Offset,
-			Limit:  req.Limit,
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		return &ListResponse{
-			Reservations: out.Reservations,
-			Total:        out.Total,
 		}, nil
 	}
 }

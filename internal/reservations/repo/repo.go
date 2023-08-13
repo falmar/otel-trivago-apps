@@ -8,7 +8,16 @@ import (
 )
 
 type Repository interface {
-	List(ctx context.Context, start time.Time, end time.Time) ([]*types.Reservation, error)
+	List(ctx context.Context, opts *ListOptions) ([]*types.Reservation, error)
 	ListByRoomID(ctx context.Context, roomID uuid.UUID) ([]*types.Reservation, error)
 	Create(ctx context.Context, res *types.Reservation) error
+}
+
+type ListOptions struct {
+	RoomID uuid.UUID
+	Start  time.Time
+	End    time.Time
+
+	Limit  int64
+	Offset int64
 }

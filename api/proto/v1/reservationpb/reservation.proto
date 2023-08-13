@@ -36,6 +36,8 @@ message ListReservationRequest {
 
   google.protobuf.Timestamp start_date = 3;
   google.protobuf.Timestamp end_date = 4;
+
+  string room_id = 5;
 }
 message ListReservationResponse {
   repeated Reservation reservations = 1;

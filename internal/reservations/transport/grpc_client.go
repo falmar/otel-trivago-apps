@@ -46,6 +46,7 @@ type grpcClient struct {
 
 func (g *grpcClient) ListReservations(ctx context.Context, input *service.ListReservationsInput) (*service.ListReservationsOutput, error) {
 	response, err := g.listReservations(ctx, &endpoint.ListRequest{
+		RoomID: input.RoomID.String(),
 		Start:  input.Start,
 		End:    input.End,
 		Offset: input.Offset,
@@ -85,6 +86,7 @@ func encodeListReservationsRequest(_ context.Context, request interface{}) (inte
 	req := request.(*endpoint.ListRequest)
 
 	return &reservationpb.ListReservationRequest{
+		RoomId:    req.RoomID,
 		StartDate: timestamppb.New(req.Start),
 		EndDate:   timestamppb.New(req.End),
 

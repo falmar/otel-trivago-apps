@@ -21,26 +21,27 @@ func NewMem() Repository {
 	}
 }
 
-func (r *memRepository) List(_ context.Context, start time.Time, end time.Time) ([]*types.Reservation, error) {
+func (r *memRepository) List(_ context.Context, opts *ListOptions) ([]*types.Reservation, error) {
 	r.mu.RLock()
 
 	var reservations []*types.Reservation
 
-	if !start.IsZero() && !end.IsZero() {
-		for _, reservation := range r.data {
-			if (reservation.Start.Equal(start) || reservation.Start.Equal(start)) &&
-				(reservation.End.Equal(end) || reservation.End.Equal(end)) {
-				reservations = append(reservations, reservation)
-			}
+	var count int64
+	for _, reservation := range r.data {
+		if opts.RoomID != uuid.Nil && reservation.RoomID != opts.RoomID {
+			continue
+		} else if !opts.Start.IsZero() && reservation.End.Before(opts.Start) {
+			continue
+		} else if !opts.End.IsZero() && reservation.Start.After(opts.End) {
+			continue
 		}
 
-		r.mu.RUnlock()
-
-		return reservations, nil
-	}
-
-	for _, reservation := range r.data {
 		reservations = append(reservations, reservation)
+		count++
+
+		if count >= opts.Limit {
+			break
+		}
 	}
 
 	r.mu.RUnlock()
