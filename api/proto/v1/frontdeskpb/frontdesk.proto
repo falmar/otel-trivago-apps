@@ -1,0 +1,20 @@
+syntax = "proto3";
+option go_package = "github.com/falmar/otel-trivago/pkg/proto/v1/frontdeskpb";
+
+import "google/protobuf/timestamp.proto";
+import "roompb/room.proto";
+
+package frontdeskpb;
+
+service FrontDeskService {
+  rpc CheckAvailability(CheckAvailabilityRequest) returns (CheckAvailabilityResponse) {}
+}
+
+message CheckAvailabilityRequest {
+  string room_type = 1;
+  google.protobuf.Timestamp start_date = 2;
+  google.protobuf.Timestamp end_date = 3;
+}
+message CheckAvailabilityResponse {
+  repeated roompb.Room rooms = 1;
+}

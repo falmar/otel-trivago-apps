@@ -1,10 +1,9 @@
 syntax = "proto3";
-option go_package = "github.com/falmar/otel-trivago/api/proto/staypb";
+option go_package = "github.com/falmar/otel-trivago/pkg/proto/v1/staypb";
 
 import "google/protobuf/timestamp.proto";
 
-package stay;
-
+package staypb;
 
 message Stay {
   string id = 1;

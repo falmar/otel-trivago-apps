@@ -1,4 +1,4 @@
-package roomrepo
+package repo
 
 import (
 	"context"

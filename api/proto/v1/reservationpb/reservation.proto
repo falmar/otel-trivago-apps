@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package = "github.com/falmar/otel-trivago/api/proto/reservationpb";
+option go_package = "github.com/falmar/otel-trivago/pkg/proto/v1/reservationpb";
 
 import "google/protobuf/timestamp.proto";
 

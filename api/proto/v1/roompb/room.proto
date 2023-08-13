@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package = "github.com/falmar/otel-trivago/api/proto/roompb";
+option go_package = "github.com/falmar/otel-trivago/pkg/proto/v1/roompb";
 
 package roompb;
 

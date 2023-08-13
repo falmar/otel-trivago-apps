@@ -2,14 +2,14 @@ package service
 
 import (
 	"context"
-	"github.com/falmar/otel-trivago/internal/rooms/roomrepo"
+	"github.com/falmar/otel-trivago/internal/rooms/repo"
 	"github.com/falmar/otel-trivago/internal/rooms/types"
 )
 
 var _ Service = (*service)(nil)
 
 type Config struct {
-	RoomRepo roomrepo.Repository
+	RoomRepo repo.Repository
 }
 
 func New(config *Config) Service {
@@ -23,7 +23,7 @@ type Service interface {
 }
 
 type service struct {
-	roomRepo roomrepo.Repository
+	roomRepo repo.Repository
 }
 
 type ListRoomsInput struct {

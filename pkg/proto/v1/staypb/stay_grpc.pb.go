@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	StayService_ListStays_FullMethodName  = "/stay.StayService/ListStays"
-	StayService_CreateStay_FullMethodName = "/stay.StayService/CreateStay"
-	StayService_UpdateStay_FullMethodName = "/stay.StayService/UpdateStay"
+	StayService_ListStays_FullMethodName  = "/staypb.StayService/ListStays"
+	StayService_CreateStay_FullMethodName = "/staypb.StayService/CreateStay"
+	StayService_UpdateStay_FullMethodName = "/staypb.StayService/UpdateStay"
 )
 
 // StayServiceClient is the client API for StayService service.
@@ -162,7 +162,7 @@ func _StayService_UpdateStay_Handler(srv interface{}, ctx context.Context, dec f
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var StayService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "stay.StayService",
+	ServiceName: "staypb.StayService",
 	HandlerType: (*StayServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

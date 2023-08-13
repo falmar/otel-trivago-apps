@@ -96,7 +96,7 @@ var reservationCmd = &cobra.Command{
 		// service setup
 		var grpcService reservationpb.ReservationServiceServer
 		{
-			svc := service.NewService(&service.Config{
+			svc := service.New(&service.Config{
 				ResvRepo: repo.NewMem(),
 			})
 			svc = service.NewTracer(svc, otpl.Tracer)

@@ -22,7 +22,7 @@ type Config struct {
 	ResvRepo repo.Repository
 }
 
-func NewService(cfg *Config) Service {
+func New(cfg *Config) Service {
 	return &service{
 		resvRepo: cfg.ResvRepo,
 	}
