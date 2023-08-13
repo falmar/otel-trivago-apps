@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/falmar/krun"
 	"github.com/falmar/otel-trivago/internal/bootstrap"
 	"github.com/falmar/otel-trivago/internal/frontdesk/endpoint"
 	"github.com/falmar/otel-trivago/internal/frontdesk/service"
@@ -97,6 +98,10 @@ var frontdeskCmd = &cobra.Command{
 
 		// service setup
 		var grpcService frontdeskpb.FrontDeskServiceServer
+		kQueue := krun.New(&krun.Config{
+			Size:      3,
+			WaitSleep: time.Millisecond * 20,
+		})
 		{
 			roomConn, err := grpc.DialContext(ctx, viper.GetString("rooms.endpoint"),
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -122,6 +127,7 @@ var frontdeskCmd = &cobra.Command{
 			svc := service.New(&service.Config{
 				RoomService:         roomSvc,
 				ReservationsService: reservationSvc,
+				KQueue:              kQueue,
 			})
 			svc = service.NewTracer(svc, otpl.Tracer)
 			svc, err = service.NewMeter(svc, otpl.Meter)
@@ -152,7 +158,14 @@ var frontdeskCmd = &cobra.Command{
 		}()
 
 		log.Println("starting server on port :" + port)
-		return server.Serve(listener)
+		err = server.Serve(listener)
+
+		// wait for all pending requests to finish
+		ctx, cancel2 := context.WithTimeout(context.Background(), time.Millisecond*100)
+		defer cancel2()
+		kQueue.Wait(ctx)
+
+		return err
 	},
 }
 

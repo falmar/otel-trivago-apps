@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/falmar/krun"
 	reservationsvc "github.com/falmar/otel-trivago/internal/reservations/service"
 	roomsvc "github.com/falmar/otel-trivago/internal/rooms/service"
 	roomtypes "github.com/falmar/otel-trivago/internal/rooms/types"
@@ -15,6 +16,8 @@ type Config struct {
 	RoomService         roomsvc.Service
 	ReservationsService reservationsvc.Service
 	StaysService        staysvc.Service
+
+	KQueue krun.Krun
 }
 
 func New(cfg *Config) Service {
@@ -22,6 +25,7 @@ func New(cfg *Config) Service {
 		roomService:         cfg.RoomService,
 		reservationsService: cfg.ReservationsService,
 		staysService:        cfg.StaysService,
+		kQueue:              cfg.KQueue,
 	}
 }
 
@@ -35,6 +39,8 @@ type service struct {
 	roomService         roomsvc.Service
 	reservationsService reservationsvc.Service
 	staysService        staysvc.Service
+
+	kQueue krun.Krun
 }
 
 type CheckAvailabilityInput struct {
@@ -66,18 +72,52 @@ func (s *service) CheckAvailability(ctx context.Context, input *CheckAvailabilit
 
 	rooms := make([]*roomtypes.Room, 0)
 
-	for _, room := range roomOut.Rooms {
-		resInput.RoomID = room.ID
-		resvOut, err := s.reservationsService.ListReservations(ctx, resInput)
-		if err != nil {
-			return nil, err
-		}
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	resultChan := make(chan *krun.Result)
 
-		if resvOut.Total > 0 {
-			continue
-		}
+	for _, r := range roomOut.Rooms {
+		ctx := context.WithValue(ctx, "room", r)
+		result := s.kQueue.Run(ctx, func(ctx context.Context) (interface{}, error) {
+			room := ctx.Value("room").(*roomtypes.Room)
 
-		rooms = append(rooms, room)
+			resInput.RoomID = room.ID
+			resvOut, err := s.reservationsService.ListReservations(ctx, resInput)
+			if err != nil {
+				return nil, err
+			}
+
+			if resvOut.Total > 0 {
+				return nil, nil
+			}
+
+			return room, nil
+		})
+
+		go func(result <-chan *krun.Result) { resultChan <- <-result }(result)
+	}
+
+	n := len(roomOut.Rooms)
+
+loop:
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case result := <-resultChan:
+			if result.Error != nil {
+				cancel()
+				return nil, result.Error
+			}
+
+			if room := result.Data.(*roomtypes.Room); room != nil {
+				rooms = append(rooms, room)
+			}
+
+			if n--; n == 0 {
+				break loop
+			}
+		}
 	}
 
 	return &CheckAvailabilityOutput{
