@@ -15,7 +15,16 @@ import (
 	"syscall"
 )
 
-var rootCmd = &cobra.Command{}
+var rootCmd = &cobra.Command{
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		//if dport := viper.GetString("debug_port"); dport != "" {
+		//	go func() {
+		//		log.Printf("starting pprof server on port :%s\n", dport)
+		//		_ = http.ListenAndServe("localhost:"+dport, nil)
+		//	}()
+		//}
+	},
+}
 
 func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -60,4 +69,7 @@ func init() {
 	rootCmd.PersistentFlags().String("otpl-endpoint", "", "otel grpc exporter endpoint eg: jaeger localhost:4317")
 	_ = viper.BindPFlag("otpl_endpoint", rootCmd.PersistentFlags().Lookup("otpl-endpoint"))
 	_ = viper.BindEnv("otpl_endpoint", "OTEL_EXPORTER_OTLP_ENDPOINT")
+
+	rootCmd.PersistentFlags().String("debug-port", "", "debug port eg: 6060")
+	_ = viper.BindPFlag("debug_port", rootCmd.PersistentFlags().Lookup("debug-port"))
 }

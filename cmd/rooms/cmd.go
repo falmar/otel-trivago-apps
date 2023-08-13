@@ -85,7 +85,7 @@ var roomsCmd = &cobra.Command{
 			}()
 
 			go func() {
-				log.Printf("Starting prometheus server :%s%s", promPort, promPath)
+				log.Printf("starting prometheus server :%s%s", promPort, promPath)
 				if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 					log.Println(err)
 				}
