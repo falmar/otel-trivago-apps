@@ -8,10 +8,11 @@ else
   LOAD=false
 fi
 
-docker buildx build --load=$LOAD --push=$PUSH -f ./build/Dockerfile \
-  -t falmar/otel-trivago:reservation \
-  --target=reservation .
+images="reservation room stay"
 
-docker buildx build --load=$LOAD --push=$PUSH -f ./build/Dockerfile \
-  -t falmar/otel-trivago:room \
-  --target=room .
+for i in $images; do
+  docker buildx build --load=$LOAD --push=$PUSH -f ./build/Dockerfile \
+    -t falmar/otel-trivago:$i \
+    --target=$i \
+    .
+done

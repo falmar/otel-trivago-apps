@@ -55,7 +55,7 @@ func init() {
 	rootCmd.PersistentFlags().String("service-version", "0.0.1", "service version")
 	_ = viper.BindPFlag("service.version", rootCmd.PersistentFlags().Lookup("service-version"))
 
-	rootCmd.PersistentFlags().String("otel-grpc-exporter-endpoint", "", "otel grpc exporter endpoint eg: jaeger localhost:4317")
-	_ = viper.BindPFlag("otpl_endpoint", rootCmd.PersistentFlags().Lookup("otel-grpc-exporter-endpoint"))
+	rootCmd.PersistentFlags().String("otpl-endpoint", "", "otel grpc exporter endpoint eg: jaeger localhost:4317")
+	_ = viper.BindPFlag("otpl_endpoint", rootCmd.PersistentFlags().Lookup("otpl-endpoint"))
 	_ = viper.BindEnv("otpl_endpoint", "OTEL_EXPORTER_OTLP_ENDPOINT")
 }

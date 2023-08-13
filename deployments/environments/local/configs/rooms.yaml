@@ -3,7 +3,7 @@ service:
   port: "80"
 
 # grpc endpoint for the otpl collector
-otpl_endpoint: "http://jaeger:4317"
+otpl_endpoint: "jaeger:4317"
 
 prometheus:
   metrics:

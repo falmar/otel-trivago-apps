@@ -2,11 +2,11 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: reservation-ingress
+  name: stay-ingress
 spec:
   podSelector:
     matchLabels:
-      otel-trivago/app: "reservation"
+      otel-trivago/app: "stay"
   policyTypes:
     - Ingress
   ingress:
@@ -22,25 +22,25 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: reservation
+  name: stay
 spec:
   replicas: 3
   selector:
     matchLabels:
-      otel-trivago/app: reservation
+      otel-trivago/app: stay
   template:
     metadata:
       labels:
-        otel-trivago/app: reservation
+        otel-trivago/app: stay
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
         prometheus.io/port: "9090"
     spec:
       containers:
-        - name: reservation
+        - name: stay
           imagePullPolicy: Always
-          image: reservation-image
+          image: stay-image
           env:
             - name: PROMETHEUS_METRICS_PORT
               value: "9090"
@@ -54,12 +54,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: reservation
+  name: stay
   labels:
-    otel-trivago/app: reservation
+    otel-trivago/app: stay
 spec:
   selector:
-    otel-trivago/app: reservation
+    otel-trivago/app: stay
   type: ClusterIP
   ports:
     - protocol: TCP

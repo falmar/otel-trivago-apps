@@ -22,7 +22,10 @@ FROM alpine:3.18 as reservation
 COPY --from=builder /go-app/bin/main /main
 ENTRYPOINT ["/main", "reservations"]
 
-
 FROM alpine:3.18 as room
 COPY --from=builder /go-app/bin/main /main
 ENTRYPOINT ["/main", "rooms"]
+
+FROM alpine:3.18 as stay
+COPY --from=builder /go-app/bin/main /main
+ENTRYPOINT ["/main", "stays"]
