@@ -29,3 +29,7 @@ ENTRYPOINT ["/main", "rooms"]
 FROM alpine:3.18 as stay
 COPY --from=builder /go-app/bin/main /main
 ENTRYPOINT ["/main", "stays"]
+
+FROM alpine:3.18 as frontdesk
+COPY --from=builder /go-app/bin/main /main
+ENTRYPOINT ["/main", "frontdesk"]

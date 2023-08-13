@@ -8,7 +8,7 @@ else
   LOAD=false
 fi
 
-images="reservation room stay"
+images="reservation room stay frontdesk"
 
 for i in $images; do
   docker buildx build --load=$LOAD --push=$PUSH -f ./build/Dockerfile \

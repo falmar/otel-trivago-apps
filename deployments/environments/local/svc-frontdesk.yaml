@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontdesk
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        otel-trivago/allow-ingress: "default"
+    spec:
+      containers:
+        - name: frontdesk
+          env:
+            - name: CONFIG
+              value: "./configs/config.yaml"
+          volumeMounts:
+            - mountPath: /configs
+              name: config
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: svc-frontdesk
+            items:
+              - key: frontdesk.yaml
+                path: config.yaml
+---
