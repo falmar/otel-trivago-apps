@@ -96,20 +96,20 @@ func encodeListReservationsRequest(_ context.Context, request interface{}) (inte
 }
 
 func decodeListReservationsResponse(_ context.Context, response interface{}) (interface{}, error) {
-	resp := response.(*reservationpb.ListReservationResponse)
+	respb := response.(*reservationpb.ListReservationResponse)
+	res := &endpoint.ListResponse{
+		Total:        respb.Total,
+		Reservations: make([]*types.Reservation, len(respb.Reservations)),
+	}
 
-	var reservations []*types.Reservation
-	for _, rpb := range resp.Reservations {
+	for i, rpb := range respb.Reservations {
 		r := &types.Reservation{}
 		mapReservationPB(rpb, r)
 
-		reservations = append(reservations, r)
+		res.Reservations[i] = r
 	}
 
-	return &endpoint.ListResponse{
-		Reservations: reservations,
-		Total:        resp.Total,
-	}, nil
+	return res, nil
 }
 
 func encodeCreateReservationRequest(_ context.Context, request interface{}) (interface{}, error) {
@@ -124,14 +124,14 @@ func encodeCreateReservationRequest(_ context.Context, request interface{}) (int
 }
 
 func decodeCreateReservationResponse(_ context.Context, response interface{}) (interface{}, error) {
-	resp := response.(*reservationpb.CreateReservationResponse)
+	respb := response.(*reservationpb.CreateReservationResponse)
+	res := &endpoint.CreateResponse{
+		Reservation: &types.Reservation{},
+	}
 
-	r := &types.Reservation{}
-	mapReservationPB(resp.Reservation, r)
+	mapReservationPB(respb.Reservation, res.Reservation)
 
-	return &endpoint.CreateResponse{
-		Reservation: r,
-	}, nil
+	return res, nil
 }
 
 func mapReservationPB(rpb *reservationpb.Reservation, r *types.Reservation) {

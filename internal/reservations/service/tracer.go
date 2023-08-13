@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
@@ -22,7 +23,7 @@ type svcTracer struct {
 }
 
 func (t *svcTracer) ListReservations(ctx context.Context, input *ListReservationsInput) (*ListReservationsOutput, error) {
-	ctx, span := t.tracer.Start(ctx, "svc.ListRooms")
+	ctx, span := t.tracer.Start(ctx, "svc.ListReservations")
 	defer span.End()
 
 	out, err := t.svc.ListReservations(ctx, input)
@@ -32,6 +33,9 @@ func (t *svcTracer) ListReservations(ctx context.Context, input *ListReservation
 			attribute.Int("output.count", len(out.Reservations)),
 		}
 
+		if input.RoomID != uuid.Nil {
+			attr = append(attr, attribute.String("input.room_id", input.RoomID.String()))
+		}
 		if !input.Start.IsZero() {
 			attr = append(attr, attribute.Int64("input.start", input.Start.Unix()))
 		}

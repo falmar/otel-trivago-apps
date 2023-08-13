@@ -57,7 +57,7 @@ func encodeListRoomsResponse(_ context.Context, response interface{}) (interface
 
 	for i, r := range resp.Rooms {
 		rpb := &roompb.Room{}
-		mapRoom(r, rpb)
+		MapRoom(r, rpb)
 
 		respb.Rooms[i] = rpb
 	}
@@ -65,7 +65,7 @@ func encodeListRoomsResponse(_ context.Context, response interface{}) (interface
 	return respb, nil
 }
 
-func mapRoom(r *types.Room, rpb *roompb.Room) {
+func MapRoom(r *types.Room, rpb *roompb.Room) {
 	rpb.Id = r.ID.String()
 	rpb.Capacity = r.Capacity
 	rpb.CleanStatus = roompb.CleanStatus(r.CleanStatus)

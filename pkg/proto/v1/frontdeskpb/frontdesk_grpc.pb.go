@@ -19,89 +19,89 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	FrontdeskService_CheckAvailability_FullMethodName = "/frontdeskpb.FrontdeskService/CheckAvailability"
+	FrontDeskService_CheckAvailability_FullMethodName = "/frontdeskpb.FrontDeskService/CheckAvailability"
 )
 
-// FrontdeskServiceClient is the client API for FrontdeskService service.
+// FrontDeskServiceClient is the client API for FrontDeskService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type FrontdeskServiceClient interface {
+type FrontDeskServiceClient interface {
 	CheckAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error)
 }
 
-type frontdeskServiceClient struct {
+type frontDeskServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewFrontdeskServiceClient(cc grpc.ClientConnInterface) FrontdeskServiceClient {
-	return &frontdeskServiceClient{cc}
+func NewFrontDeskServiceClient(cc grpc.ClientConnInterface) FrontDeskServiceClient {
+	return &frontDeskServiceClient{cc}
 }
 
-func (c *frontdeskServiceClient) CheckAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error) {
+func (c *frontDeskServiceClient) CheckAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error) {
 	out := new(CheckAvailabilityResponse)
-	err := c.cc.Invoke(ctx, FrontdeskService_CheckAvailability_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, FrontDeskService_CheckAvailability_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// FrontdeskServiceServer is the server API for FrontdeskService service.
-// All implementations must embed UnimplementedFrontdeskServiceServer
+// FrontDeskServiceServer is the server API for FrontDeskService service.
+// All implementations must embed UnimplementedFrontDeskServiceServer
 // for forward compatibility
-type FrontdeskServiceServer interface {
+type FrontDeskServiceServer interface {
 	CheckAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error)
-	mustEmbedUnimplementedFrontdeskServiceServer()
+	mustEmbedUnimplementedFrontDeskServiceServer()
 }
 
-// UnimplementedFrontdeskServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedFrontdeskServiceServer struct {
+// UnimplementedFrontDeskServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedFrontDeskServiceServer struct {
 }
 
-func (UnimplementedFrontdeskServiceServer) CheckAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error) {
+func (UnimplementedFrontDeskServiceServer) CheckAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckAvailability not implemented")
 }
-func (UnimplementedFrontdeskServiceServer) mustEmbedUnimplementedFrontdeskServiceServer() {}
+func (UnimplementedFrontDeskServiceServer) mustEmbedUnimplementedFrontDeskServiceServer() {}
 
-// UnsafeFrontdeskServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to FrontdeskServiceServer will
+// UnsafeFrontDeskServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FrontDeskServiceServer will
 // result in compilation errors.
-type UnsafeFrontdeskServiceServer interface {
-	mustEmbedUnimplementedFrontdeskServiceServer()
+type UnsafeFrontDeskServiceServer interface {
+	mustEmbedUnimplementedFrontDeskServiceServer()
 }
 
-func RegisterFrontdeskServiceServer(s grpc.ServiceRegistrar, srv FrontdeskServiceServer) {
-	s.RegisterService(&FrontdeskService_ServiceDesc, srv)
+func RegisterFrontDeskServiceServer(s grpc.ServiceRegistrar, srv FrontDeskServiceServer) {
+	s.RegisterService(&FrontDeskService_ServiceDesc, srv)
 }
 
-func _FrontdeskService_CheckAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FrontDeskService_CheckAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckAvailabilityRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FrontdeskServiceServer).CheckAvailability(ctx, in)
+		return srv.(FrontDeskServiceServer).CheckAvailability(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: FrontdeskService_CheckAvailability_FullMethodName,
+		FullMethod: FrontDeskService_CheckAvailability_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FrontdeskServiceServer).CheckAvailability(ctx, req.(*CheckAvailabilityRequest))
+		return srv.(FrontDeskServiceServer).CheckAvailability(ctx, req.(*CheckAvailabilityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// FrontdeskService_ServiceDesc is the grpc.ServiceDesc for FrontdeskService service.
+// FrontDeskService_ServiceDesc is the grpc.ServiceDesc for FrontDeskService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var FrontdeskService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "frontdeskpb.FrontdeskService",
-	HandlerType: (*FrontdeskServiceServer)(nil),
+var FrontDeskService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "frontdeskpb.FrontDeskService",
+	HandlerType: (*FrontDeskServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CheckAvailability",
-			Handler:    _FrontdeskService_CheckAvailability_Handler,
+			Handler:    _FrontDeskService_CheckAvailability_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

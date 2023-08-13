@@ -35,7 +35,6 @@ func (s *serviceMeter) ListReservations(ctx context.Context, input *ListReservat
 
 	defer func() {
 		s.listReservationsCounter.Add(ctx, 1, metric.WithAttributes(
-			attribute.String("scope", "service"),
 			attribute.Bool("error", err != nil),
 		))
 	}()
@@ -48,7 +47,6 @@ func (s *serviceMeter) CreateReservation(ctx context.Context, input *CreateReser
 
 	defer func() {
 		s.createReservationCounter.Add(ctx, 1, metric.WithAttributes(
-			attribute.String("scope", "service"),
 			attribute.Bool("error", err != nil),
 		))
 	}()

@@ -1,6 +1,6 @@
 service:
-  name: "reservations"
-  port: "8080"
+  name: "frontdesk"
+  port: "8083"
 
 # grpc endpoint for the otpl collector
 otpl_endpoint: "localhost:4317"
@@ -8,5 +8,10 @@ otpl_endpoint: "localhost:4317"
 prometheus:
   metrics:
     enable: false
-    port: "8190"
+    port: "8193"
     path: "/metrics"
+
+reservations:
+  endpoint: "localhost:8080"
+rooms:
+  endpoint: "localhost:8081"

@@ -55,13 +55,11 @@ func decodeListRoomsResponse(_ context.Context, response interface{}) (request i
 		Total: respb.Total,
 	}
 
-	var rooms []*types.Room
-
 	for i, rpb := range respb.Rooms {
 		r := &types.Room{}
-		mapRoomPB(rpb, r)
+		MapRoomPB(rpb, r)
 
-		rooms[i] = r
+		resp.Rooms[i] = r
 	}
 
 	return resp, nil
@@ -79,7 +77,7 @@ func encodeListRoomsRequest(_ context.Context, request interface{}) (response in
 	return reqpb, nil
 }
 
-func mapRoomPB(rpb *roompb.Room, r *types.Room) {
+func MapRoomPB(rpb *roompb.Room, r *types.Room) {
 	r.ID = uuid.MustParse(rpb.Id)
 	r.Capacity = rpb.Capacity
 	r.CleanStatus = types.CleanStatus(rpb.CleanStatus)

@@ -32,7 +32,6 @@ func (s *svcMeter) ListRooms(ctx context.Context, input *ListRoomsInput) (*ListR
 
 	defer func() {
 		s.listRoomsCounter.Add(ctx, 1, metric.WithAttributes(
-			attribute.String("scope", "svc"),
 			attribute.Bool("error", err != nil),
 		))
 	}()
