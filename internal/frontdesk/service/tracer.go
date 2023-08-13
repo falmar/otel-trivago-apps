@@ -22,7 +22,7 @@ type serviceTracer struct {
 }
 
 func (s *serviceTracer) CheckAvailability(ctx context.Context, input *CheckAvailabilityInput) (*CheckAvailabilityOutput, error) {
-	ctx, span := s.tr.Start(ctx, "CheckAvailability")
+	ctx, span := s.tr.Start(ctx, "svc.CheckAvailability")
 	defer span.End()
 
 	out, err := s.svc.CheckAvailability(ctx, input)
