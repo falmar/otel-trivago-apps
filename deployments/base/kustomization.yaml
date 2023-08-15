@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - svc-reservation.yaml
   - svc-room.yaml
-  - svc-stay.yaml
   - svc-frontdesk.yaml
 
 images:
@@ -13,9 +12,6 @@ images:
   - name: room-image
     newName: docker.io/falmar/otel-trivago
     newTag: room
-  - name: stay-image
-    newName: docker.io/falmar/otel-trivago
-    newTag: stay
   - name: frontdesk-image
     newName: docker.io/falmar/otel-trivago
     newTag: frontdesk
