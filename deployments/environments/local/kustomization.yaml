@@ -13,7 +13,6 @@ resources:
 patchesStrategicMerge:
   - svc-reservation.yaml
   - svc-room.yaml
-  - svc-stay.yaml
   - svc-frontdesk.yaml
 
 configMapGenerator:
@@ -23,9 +22,6 @@ configMapGenerator:
   - name: svc-room
     files:
       - configs/rooms.yaml
-  - name: svc-stay
-    files:
-      - configs/stays.yaml
   - name: svc-frontdesk
     files:
       - configs/frontdesk.yaml
