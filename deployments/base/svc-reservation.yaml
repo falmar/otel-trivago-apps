@@ -32,6 +32,7 @@ spec:
     metadata:
       labels:
         otel-trivago/app: reservation
+        otel-trivago/grpc-otlp: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
