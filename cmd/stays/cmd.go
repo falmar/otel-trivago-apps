@@ -38,10 +38,10 @@ var staysCmd = &cobra.Command{
 		}
 
 		// tracer/meter setup
-		var otpl *bootstrap.OTPL
+		var otlp *bootstrap.OTLP
 		{
 			var err error = nil
-			otpl, err = bootstrap.NewOTPL(ctx, &bootstrap.OTPLConfig{
+			otlp, err = bootstrap.NewOTLP(ctx, &bootstrap.OTLPConfig{
 				ServiceName:          svcName,
 				ServiceVersion:       version,
 				GRPCExporterEndpoint: viper.GetString("otpl_endpoint"),
@@ -55,12 +55,12 @@ var staysCmd = &cobra.Command{
 				return fmt.Errorf("failed to bootstrap otel: %w", err)
 			}
 
-			// shutdown otpl
+			// shutdown otlp
 			defer func() {
 				ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 				defer cancel()
 
-				if err = otpl.Shutdown(ctx); err != nil {
+				if err = otlp.Shutdown(ctx); err != nil {
 					log.Println(err)
 				}
 			}()
@@ -99,8 +99,8 @@ var staysCmd = &cobra.Command{
 			svc := service.New(&service.Config{
 				Repo: repo.NewMemRepo(),
 			})
-			svc = service.NewTracer(svc, otpl.Tracer)
-			svc, err := service.NewMeter(svc, otpl.Meter)
+			svc = service.NewTracer(svc, otlp.Tracer)
+			svc, err := service.NewMeter(svc, otlp.Meter)
 			if err != nil {
 				return err
 			}

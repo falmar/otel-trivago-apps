@@ -2,7 +2,7 @@ service:
   name: "reservations"
   port: "80"
 
-# grpc endpoint for the otpl collector
+# grpc endpoint for the otlp collector
 otpl_endpoint: "jaeger:4317"
 
 prometheus:

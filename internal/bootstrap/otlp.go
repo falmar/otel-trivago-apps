@@ -13,7 +13,7 @@ import (
 	"os"
 )
 
-type OTPL struct {
+type OTLP struct {
 	Tracer trace.Tracer
 	Meter  metric.Meter
 
@@ -21,7 +21,7 @@ type OTPL struct {
 	tp *sdktrace.TracerProvider
 }
 
-func (o *OTPL) Shutdown(ctx context.Context) error {
+func (o *OTLP) Shutdown(ctx context.Context) error {
 	if err := o.mr.Shutdown(ctx); err != nil {
 		return fmt.Errorf("failed to shutdown meter reader: %w", err)
 	}
@@ -33,14 +33,14 @@ func (o *OTPL) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-type OTPLConfig struct {
+type OTLPConfig struct {
 	ServiceName          string
 	ServiceVersion       string
 	GRPCExporterEndpoint string
 	InstrumentAttributes []attribute.KeyValue
 }
 
-func NewOTPL(ctx context.Context, config *OTPLConfig) (*OTPL, error) {
+func NewOTLP(ctx context.Context, config *OTLPConfig) (*OTLP, error) {
 	re, err := NewResource(config.InstrumentAttributes)
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func NewOTPL(ctx context.Context, config *OTPLConfig) (*OTPL, error) {
 	mt := InitMeter(mp, config.ServiceName, config.ServiceVersion, config.InstrumentAttributes)
 	// --
 
-	return &OTPL{
+	return &OTLP{
 		Tracer: tr,
 		Meter:  mt,
 

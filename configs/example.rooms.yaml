@@ -2,7 +2,7 @@ service:
   name: "rooms"
   port: "8081"
 
-# grpc endpoint for the otpl collector
+# grpc endpoint for the otlp collector
 otpl_endpoint: "localhost:4317"
 
 prometheus:
