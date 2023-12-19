@@ -24,6 +24,7 @@ kind: Deployment
 metadata:
   name: reservation
 spec:
+  revisionHistoryLimit: 3
   replicas: 3
   selector:
     matchLabels:
