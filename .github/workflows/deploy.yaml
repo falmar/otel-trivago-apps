@@ -1,0 +1,72 @@
+name: deploy
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  push_images:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [ reservation, room, frontdesk, stay ]
+    env:
+      platform: linux/amd64,linux/arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: ${{ env.platform }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          platforms: ${{ env.platform }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.HUB_USERNAME }}
+          password: ${{ secrets.HUB_PASSWORD }}
+
+      - name: Short Commit SHA
+        id: short_sha
+        run: echo "commit_id=$(echo $GITHUB_SHA | cut -c1-8)" >> $GITHUB_OUTPUT
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          platforms: ${{ env.platform }}
+          context: .
+          target: ${{ matrix.image }}
+          push: true
+          file: ./build/Dockerfile
+          tags: docker.io/${{ secrets.HUB_USERNAME }}/${{ matrix.image }}-${{ steps.short_sha.outputs.commit_id }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  commit:
+    runs-on: ubuntu-latest
+    needs: push_images
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Short Commit SHA
+        id: short_sha
+        run: echo "commit_id=$(echo $GITHUB_SHA | cut -c1-8)" >> $GITHUB_OUTPUT
+
+      - name: Update YAML File
+        run: |
+          for image in reservation room frontdesk stay; do
+            sed -i "s/newTag: ${image}-[^ ]*/newTag: ${image}-${{ steps.short_sha.outputs.commit_id }}/" deployments/base/kustomization.yaml
+          done      
+
+      - uses: stefanzweifel/git-auto-commit-action@v5

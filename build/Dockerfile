@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine AS builder
+FROM golang:1.21-alpine AS builder
 WORKDIR /go-app
 
 # install dependencies
@@ -18,18 +18,18 @@ RUN ls ./cmd && go build -ldflags="-s -w" -o ./bin/main ./cmd \
     && chmod +x ./bin/main
 # ---
 
-FROM alpine:3.18 as reservation
+FROM alpine:3.19 as reservation
 COPY --from=builder /go-app/bin/main /main
 ENTRYPOINT ["/main", "reservations"]
 
-FROM alpine:3.18 as room
+FROM alpine:3.19 as room
 COPY --from=builder /go-app/bin/main /main
 ENTRYPOINT ["/main", "rooms"]
 
-FROM alpine:3.18 as stay
+FROM alpine:3.19 as stay
 COPY --from=builder /go-app/bin/main /main
 ENTRYPOINT ["/main", "stays"]
 
-FROM alpine:3.18 as frontdesk
+FROM alpine:3.19 as frontdesk
 COPY --from=builder /go-app/bin/main /main
 ENTRYPOINT ["/main", "frontdesk"]
