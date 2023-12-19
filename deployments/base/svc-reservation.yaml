@@ -40,8 +40,10 @@ spec:
     spec:
       containers:
         - name: reservation
-          imagePullPolicy: Always
-          image: reservation-image
+          imagePullPolicy: IfNotPresent
+          image: trivago-image
+          args:
+            - reservations
           env:
             - name: PROMETHEUS_METRICS_PORT
               value: "9090"

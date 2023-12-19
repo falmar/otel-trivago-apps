@@ -40,8 +40,10 @@ spec:
     spec:
       containers:
         - name: frontdesk
-          imagePullPolicy: Always
-          image: frontdesk-image
+          imagePullPolicy: IfNotPresent
+          image: trivago-image
+          args:
+            - frontdesk
           env:
             - name: PROMETHEUS_METRICS_PORT
               value: "9090"

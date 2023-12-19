@@ -40,8 +40,10 @@ spec:
     spec:
       containers:
         - name: room
-          imagePullPolicy: Always
-          image: room-image
+          imagePullPolicy: IfNotPresent
+          image: trivago-image
+          args:
+            - rooms
           env:
             - name: PROMETHEUS_METRICS_PORT
               value: "9090"

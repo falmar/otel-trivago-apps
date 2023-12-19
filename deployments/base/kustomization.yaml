@@ -6,15 +6,6 @@ resources:
   - svc-frontdesk.yaml
 
 images:
-  - name: reservation-image
+  - name: trivago-image
     newName: docker.io/falmar/otel-trivago
-    newTag: reservation-3fe245f9
-  - name: room-image
-    newName: docker.io/falmar/otel-trivago
-    newTag: room-3fe245f9
-  - name: frontdesk-image
-    newName: docker.io/falmar/otel-trivago
-    newTag: frontdesk-3fe245f9
-  - name: stay-image
-    newName: docker.io/falmar/otel-trivago
-    newTag: stay-3fe245f9
+    newTag: tag

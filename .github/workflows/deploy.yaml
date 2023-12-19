@@ -7,9 +7,6 @@ on:
 jobs:
   push_images:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        image: [ reservation, room, frontdesk, stay ]
     env:
       platform: linux/amd64,linux/arm64
     steps:
@@ -41,10 +38,10 @@ jobs:
         with:
           platforms: ${{ env.platform }}
           context: .
-          target: ${{ matrix.image }}
+          target: output
           push: true
           file: ./build/Dockerfile
-          tags: docker.io/${{ secrets.HUB_USERNAME }}/${{ matrix.image }}-${{ steps.short_sha.outputs.commit_id }}
+          tags: docker.io/${{ secrets.HUB_USERNAME }}/${{ steps.short_sha.outputs.commit_id }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -65,8 +62,6 @@ jobs:
 
       - name: Update YAML File
         run: |
-          for image in reservation room frontdesk stay; do
-            sed -i "s/newTag: ${image}-[^ ]*/newTag: ${image}-${{ steps.short_sha.outputs.commit_id }}/" deployments/base/kustomization.yaml
-          done      
+          sed -i "s/newTag: [^ ]*/newTag: ${{ steps.short_sha.outputs.commit_id }}/" deployments/base/kustomization.yaml      
 
       - uses: stefanzweifel/git-auto-commit-action@v5
