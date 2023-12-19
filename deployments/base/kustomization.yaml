@@ -8,13 +8,13 @@ resources:
 images:
   - name: reservation-image
     newName: docker.io/falmar/otel-trivago
-    newTag: reservation-
+    newTag: reservation-3fe245f9
   - name: room-image
     newName: docker.io/falmar/otel-trivago
-    newTag: room-
+    newTag: room-3fe245f9
   - name: frontdesk-image
     newName: docker.io/falmar/otel-trivago
-    newTag: frontdesk-
+    newTag: frontdesk-3fe245f9
   - name: stay-image
     newName: docker.io/falmar/otel-trivago
-    newTag: stay-
+    newTag: stay-3fe245f9
