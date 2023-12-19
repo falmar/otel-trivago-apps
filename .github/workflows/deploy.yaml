@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       platform: linux/amd64,linux/arm64
+      DOCKER_IMAGE: docker.io/${{ secrets.HUB_USERNAME }}/otel-trivago
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,7 +42,7 @@ jobs:
           target: output
           push: true
           file: ./build/Dockerfile
-          tags: docker.io/${{ secrets.HUB_USERNAME }}/${{ steps.short_sha.outputs.commit_id }}
+          tags: ${{ env.DOCKER_IMAGE }}:${{ steps.short_sha.outputs.commit_id }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
