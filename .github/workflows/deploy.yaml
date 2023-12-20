@@ -5,7 +5,11 @@ on:
       - master
 
 jobs:
+  tests:
+    uses: ./.github/workflows/tests.yaml
+
   push_images:
+    needs: tests
     runs-on: ubuntu-latest
     env:
       platform: linux/amd64,linux/arm64

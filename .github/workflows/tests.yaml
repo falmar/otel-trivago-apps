@@ -1,0 +1,20 @@
+name: tests
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_call:
+    inputs: {}
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.54
+          install-mode: goinstall
