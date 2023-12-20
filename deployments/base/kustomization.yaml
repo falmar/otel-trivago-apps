@@ -8,4 +8,4 @@ resources:
 images:
   - name: trivago-image
     newName: docker.io/falmar/otel-trivago
-    newTag: 91458725
+    newTag: ad894a52
