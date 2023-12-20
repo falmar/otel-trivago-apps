@@ -67,8 +67,6 @@ func (g *grpcServer) UpdateStay(ctx context.Context, request *staypb.UpdateStayR
 	return resp.(*staypb.UpdateStayResponse), nil
 }
 
-func (g *grpcServer) mustEmbedUnimplementedStayServiceServer() {}
-
 func decodeListRequest(_ context.Context, request interface{}) (interface{}, error) {
 	pbreq := request.(*staypb.ListStaysRequest)
 	req := &endpoint.ListStaysRequest{

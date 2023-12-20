@@ -52,8 +52,6 @@ func (g *grpcServer) ListReservations(ctx context.Context, request *reservationp
 	return resp.(*reservationpb.ListReservationResponse), nil
 }
 
-func (g *grpcServer) mustEmbedUnimplementedReservationServiceServer() {}
-
 func decodeListRequest(_ context.Context, request interface{}) (interface{}, error) {
 	pbreq := request.(*reservationpb.ListReservationRequest)
 

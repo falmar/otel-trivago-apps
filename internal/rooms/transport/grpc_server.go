@@ -27,15 +27,13 @@ func NewGRPCServer(endpoints *endpoint.Endpoints) roompb.RoomServiceServer {
 }
 
 func (g *grpcServer) ListRooms(ctx context.Context, request *roompb.ListRoomsRequest) (*roompb.ListRoomsResponse, error) {
-	ctx, resp, err := g.listRooms.ServeGRPC(ctx, request)
+	_, resp, err := g.listRooms.ServeGRPC(ctx, request)
 	if err != nil {
 		return nil, err
 	}
 
 	return resp.(*roompb.ListRoomsResponse), nil
 }
-
-func (g *grpcServer) mustEmbedUnimplementedRoomServiceServer() {}
 
 func decodeListRoomsRequest(_ context.Context, request interface{}) (interface{}, error) {
 	reqpb := request.(*roompb.ListRoomsRequest)

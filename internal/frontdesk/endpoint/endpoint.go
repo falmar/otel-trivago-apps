@@ -30,7 +30,7 @@ type CheckAvailabilityResponse struct {
 
 func MakeCheckAvailabilityEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		var err error = nil
+		var err error
 		req := request.(*CheckAvailabilityRequest)
 
 		if req.Start.IsZero() {

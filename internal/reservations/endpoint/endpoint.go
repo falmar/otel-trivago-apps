@@ -37,7 +37,7 @@ type ListResponse struct {
 
 func makeListReservationsEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		var err error = nil
+		var err error
 		req := request.(*ListRequest)
 		in := &service.ListReservationsInput{
 			Start: req.Start,

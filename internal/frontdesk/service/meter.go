@@ -9,7 +9,7 @@ import (
 var _ Service = (*serviceMeter)(nil)
 
 func NewMeter(svc Service, mt metric.Meter) (Service, error) {
-	var err error = nil
+	var err error
 	metered := &serviceMeter{
 		svc: svc,
 	}

@@ -43,7 +43,7 @@ var frontdeskCmd = &cobra.Command{
 		// tracer/meter setup
 		var otlp *bootstrap.OTLP
 		{
-			var err error = nil
+			var err error
 			otlp, err = bootstrap.NewOTLP(ctx, &bootstrap.OTLPConfig{
 				ServiceName:          svcName,
 				ServiceVersion:       version,
@@ -105,7 +105,7 @@ var frontdeskCmd = &cobra.Command{
 		{
 			roomConn, err := grpc.DialContext(ctx, viper.GetString("rooms.endpoint"),
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
-				grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+				grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 			)
 			if err != nil {
 				return err
@@ -114,7 +114,7 @@ var frontdeskCmd = &cobra.Command{
 
 			reservationConn, err := grpc.DialContext(ctx, viper.GetString("reservations.endpoint"),
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
-				grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+				grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 			)
 			if err != nil {
 				return err
@@ -142,7 +142,7 @@ var frontdeskCmd = &cobra.Command{
 
 		// grpc server setup
 		server := grpc.NewServer(
-			grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+			grpc.StatsHandler(otelgrpc.NewServerHandler()),
 		)
 		frontdeskpb.RegisterFrontDeskServiceServer(server, grpcService)
 

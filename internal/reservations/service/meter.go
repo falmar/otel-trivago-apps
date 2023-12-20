@@ -14,7 +14,7 @@ type serviceMeter struct {
 }
 
 func NewMeter(svc Service, mt metric.Meter) (Service, error) {
-	var err error = nil
+	var err error
 	svcMeter := &serviceMeter{svc: svc}
 
 	svcMeter.listReservationsCounter, err = mt.Int64Counter("list_reservations")

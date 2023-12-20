@@ -40,7 +40,7 @@ var staysCmd = &cobra.Command{
 		// tracer/meter setup
 		var otlp *bootstrap.OTLP
 		{
-			var err error = nil
+			var err error
 			otlp, err = bootstrap.NewOTLP(ctx, &bootstrap.OTLPConfig{
 				ServiceName:          svcName,
 				ServiceVersion:       version,
@@ -112,7 +112,7 @@ var staysCmd = &cobra.Command{
 
 		// grpc server setup
 		server := grpc.NewServer(
-			grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+			grpc.StatsHandler(otelgrpc.NewClientHandler()),
 		)
 		staypb.RegisterStayServiceServer(server, grpcService)
 

@@ -39,7 +39,7 @@ type ListStaysResponse struct {
 
 func MakeListStaysEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		var err error = nil
+		var err error
 		req := request.(*ListStaysRequest)
 		in := &service.ListStaysInput{
 			Limit:  req.Limit,
@@ -87,7 +87,7 @@ type CreateStayResponse struct {
 
 func MakeCreateStayEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		var err error = nil
+		var err error
 		req := request.(*CreateStayRequest)
 		in := &service.CreateStayInput{
 			CheckIn: req.CheckIn,
@@ -139,7 +139,7 @@ type UpdateStayResponse struct {
 
 func MakeUpdateStayEndpoint(svc service.Service) kitendpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		var err error = nil
+		var err error
 		req := request.(*UpdateStayRequest)
 		in := &service.UpdateStayInput{
 			Notes: req.Notes,

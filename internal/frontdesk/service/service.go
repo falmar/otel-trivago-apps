@@ -12,6 +12,10 @@ import (
 
 var _ Service = (*service)(nil)
 
+type roomCtxKey struct{}
+
+var roomKey = roomCtxKey{}
+
 type Config struct {
 	RoomService         roomsvc.Service
 	ReservationsService reservationsvc.Service
@@ -77,9 +81,9 @@ func (s *service) CheckAvailability(ctx context.Context, input *CheckAvailabilit
 	resultChan := make(chan *krun.Result)
 
 	for _, r := range roomOut.Rooms {
-		ctx := context.WithValue(ctx, "room", r)
+		ctx := context.WithValue(ctx, roomKey, r)
 		result := s.kQueue.Run(ctx, func(ctx context.Context) (interface{}, error) {
-			room := ctx.Value("room").(*roomtypes.Room)
+			room := ctx.Value(roomKey).(*roomtypes.Room)
 
 			resInput.RoomID = room.ID
 			resvOut, err := s.reservationsService.ListReservations(ctx, resInput)
